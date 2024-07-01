@@ -1,0 +1,149 @@
+[
+  {
+    "bezierId": 1,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 50,
+        "y": -100,
+        "seconds": 5
+      },
+      {
+        "x": 300,
+        "y": -400,
+        "seconds": 10
+      },
+      {
+        "x": 1800,
+        "y": -650,
+        "seconds": 6
+      }
+    ]
+  },
+  {
+    "bezierId": 2,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 100,
+        "y": -200,
+        "seconds": 10
+      },
+      {
+        "x": 400,
+        "y": -300,
+        "seconds": 10
+      },
+      {
+        "x": 1800,
+        "y": -600,
+        "seconds": 10
+      }
+    ]
+  },
+  {
+    "bezierId": 3,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 50,
+        "y": 50,
+        "seconds": 10
+      },
+      {
+        "x": 400,
+        "y": 100,
+        "seconds": 10
+      },
+      {
+        "x": 1800,
+        "y": 200,
+        "seconds": 10
+      }
+    ]
+  },
+  {
+    "bezierId": 4,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 80,
+        "y": 200,
+        "seconds": 8
+      },
+      {
+        "x": 300,
+        "y": 500,
+        "seconds": 7
+      },
+      {
+        "x": 1800,
+        "y": 650,
+        "seconds": 8
+      }
+    ]
+  },
+  {
+    "bezierId": 5,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 100,
+        "y": 100,
+        "seconds": 3
+      },
+      {
+        "x": 350,
+        "y": 400,
+        "seconds": 10
+      },
+      {
+        "x": 1800,
+        "y": 550,
+        "seconds": 10
+      }
+    ]
+  },
+  {
+    "bezierId": 6,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 100,
+        "y": 2,
+        "seconds": 5
+      },
+      {
+        "x": 350,
+        "y": -2,
+        "seconds": 6
+      },
+      {
+        "x": 1800,
+        "y": 0,
+        "seconds": 10
+      }
+    ]
+  },
+  {
+    "bezierId": 7,
+    "name": "普通",
+    "bezierList": [
+      {
+        "x": 100,
+        "y": 2,
+        "seconds": 4
+      },
+      {
+        "x": 400,
+        "y": -2,
+        "seconds": 10
+      },
+      {
+        "x": 1800,
+        "y": 0,
+        "seconds": 10
+      }
+    ]
+  }
+]

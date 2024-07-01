@@ -1,0 +1,3 @@
+[submodule "nano"]
+	path = nano
+	url = git@github.com:rezonegames/nano.git

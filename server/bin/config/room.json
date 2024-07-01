@@ -1,0 +1,26 @@
+[
+  {
+    "roomId": "1",
+    "name": "初级场",
+    "minCoin": 100000,
+    "type": 1,
+    "coinCoeff": 1,
+    "activityList": []
+  },
+  {
+    "roomId": "2",
+    "name": "中级场",
+    "minCoin": 2000000,
+    "type": 1,
+    "coinCoeff": 20,
+    "activityList": []
+  },
+  {
+    "roomId": "3",
+    "name": "高级场",
+    "minCoin": 60000000,
+    "type": 1,
+    "coinCoeff": 600,
+    "activityList": []
+  }
+]

@@ -1,0 +1,30 @@
+syntax = "proto3";
+package proto;
+option go_package = "/proto";
+import "error.proto";
+import "consts.proto";
+
+// AccountLoginReq 第三方登录
+message AccountLoginReq {
+  AccountType partition = 1;
+  string accountId = 2;
+  string password = 3;
+}
+
+message AccountLoginResp {
+  ErrorCode code = 1;
+  string userId = 2;
+  string addr = 3;
+  string name = 4;
+}
+
+// AccountRegisterReq 注册
+message AccountRegisterReq {
+  string accountId = 2;
+  string password = 3;
+}
+
+message AccountRegisterResp {
+  ErrorCode code = 1;
+  string addr = 2;
+}

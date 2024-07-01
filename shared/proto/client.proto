@@ -1,0 +1,299 @@
+syntax = "proto3";
+import "error.proto";
+import "consts.proto";
+package proto;
+option go_package = "/proto";
+
+// Item 商品
+message ItemInfo {
+  ItemType key = 1;
+  int32 val = 2;
+}
+
+// 武器
+message WeaponInfo {
+  // config
+  int32 weaponId = 1;
+  string name = 2;
+  int32 hitRate = 3;
+  int32 attackValue = 4;
+}
+
+// User 存档
+message UserInfo {
+  string name = 1;
+  string userId = 2;
+  int32 seatId = 3;
+  WeaponInfo weapon = 4;
+  repeated ItemInfo itemList = 5;
+  int64 updatedAt = 100;
+}
+
+// 房间
+message RoomInfo {
+  // config
+  string roomId = 1;
+  string name = 3;
+  int32 minCoin = 4;
+  RoomType type = 5;
+  int32 coinCoeff = 6;
+  int64 userCount = 7;
+  // other
+  int32 tableCount = 100;
+}
+
+// bezier 曲线点
+message BezierPoint {
+  int32 x = 1;
+  int32 y = 2;
+  int32 seconds = 3;
+}
+
+message BezierInfo {
+  int32 bezierId = 1;
+  string name = 2;
+  repeated BezierPoint bezierList = 100;
+}
+
+// 鱼
+message FishInfo {
+  // config
+  string fishId = 1;
+  string name = 2;
+  int32 coin = 3;
+  int32 hp = 4;
+  int32 dodgeRate = 5;
+  int32 defenceValue = 6;
+  int64 bornTime = 7;
+  // other
+  BezierInfo bezier = 100;
+}
+
+// TableInfo 下发桌子信息
+message TableInfo {
+
+  string tableId = 1;
+  TableState tableState = 2;
+  map<string, UserInfo>  users = 3;
+
+  // Waiter 桌子等待
+  message Waiter {
+    map<string, int64> readys = 1;
+    int32 countDown = 2;
+  }
+  Waiter waiter = 5;
+
+  // Res 用于资源检查
+  message Res {
+    map<string, int32> users = 1;
+    int32 countDown = 2;
+  }
+  Res res = 6;
+
+  // 房间信息
+  RoomInfo room = 7;
+  // 随机种子
+  int64 randSeed = 8;
+  // 是否加密
+  bool hasPassword = 9;
+  // 创建时间
+  int64 createTime = 11;
+  // 房主
+  string owner = 12;
+
+  // 结算本局时用的
+  map<string, OnItemChange> userItems = 100;
+}
+
+// Action 玩家行为
+message Action {
+  ActionType key = 1;
+  repeated string valList = 2;
+}
+
+/////////////////////////////////////////////////
+
+// LoginToGame 登录
+message LoginToGame {
+  string userId = 1;
+}
+
+message LoginToGameResp {
+  ErrorCode code = 1;
+  UserInfo user = 2;
+  string roomId = 4;
+  string tableId = 5;
+}
+
+// RegisterGameReq 注册
+message RegisterGameReq {
+  string name = 1;
+  string accountId = 2;
+}
+
+message RegisterGameResponse {
+  ErrorCode code = 1;
+  UserInfo user = 2;
+}
+
+// GetRoomList 房间列表
+message GetRoomList {
+
+}
+
+message GetRoomListResp {
+  ErrorCode code = 1;
+  repeated RoomInfo roomList = 2;
+}
+
+// GetTableList 桌子列表
+message GetTableList {
+  string roomId = 1;
+  int32 from = 2;
+  int32 limit = 3;
+}
+
+message GetTableListResp {
+  ErrorCode code = 1;
+  repeated TableInfo tableList = 2;
+}
+
+// CreateTable 创建
+message CreateTable {
+  string tableId = 1;
+  string password = 2;
+}
+
+message CreateTableResp {
+  ErrorCode code = 1;
+  TableInfo table = 2;
+}
+
+// JoinTable 加入
+message JoinTable {
+  string tableId = 1;
+}
+
+message JoinTableResp {
+  ErrorCode code = 1;
+  TableInfo table = 2;
+}
+
+// SitDown 坐下
+message SitDown {
+  string tableId = 1;
+  string password = 2;
+  int32 seatId = 3;
+}
+
+message SitDownResp {
+  ErrorCode code = 1;
+}
+
+// LeaveTable 离开
+message LeaveTable {}
+
+message LeaveTableResp {
+  ErrorCode code = 1;
+}
+
+
+// StandUp 站起
+message StandUp {
+
+}
+
+message StandUpResp {
+  ErrorCode code = 1;
+}
+
+// KickUser 踢出
+message KickUser {
+  string userId = 1;
+}
+
+message KickUserResp {
+  ErrorCode code = 1;
+}
+
+// JoinRoom 加入房间
+message JoinRoom {
+  string roomId = 1;
+}
+
+message JoinRoomResp {
+  ErrorCode code = 1;
+  RoomInfo roomInfo = 2;
+}
+
+// LeaveRoom 离开房间
+message LeaveRoom {
+  string roomId = 1;
+}
+
+message LeaveRoomResp {
+  ErrorCode code = 1;
+}
+
+message QuickStart {
+  string roomId = 1;
+}
+
+message QuickStartResp {
+  ErrorCode code = 1;
+}
+
+// NotifyReady 准备
+message NotifyReady {
+}
+
+// NotifyResChange 资源加载到哪了
+message NotifyResChange {
+  int32 current = 1;
+}
+
+// ResumeTable 断线重连用到
+message ResumeTable {
+}
+
+message ResumeTableResp {
+  ErrorCode code = 1;
+}
+
+// UpdateFrame 客户端每个动作
+message NotifyUpdateFrame {
+  Action action = 1;
+}
+
+//////////////////////////////////////////////////////////////
+
+message OnTableAction {
+  TableAction action = 1;
+
+  // 生鱼
+  repeated FishInfo fishList = 2;
+
+  // 有玩家加入或者离开
+  UserInfo user = 3;
+
+  //
+}
+
+// OnGameState 在每一个步骤，下发游戏状态，客户端可根据状态切换页面
+message OnGameState {
+  GameState state = 1;
+  TableInfo tableInfo = 2;
+}
+
+// 玩家的每一个操作，都要上传到服务器，并广播出去
+message OnFrame {
+  string userId = 1;
+  Action action = 2;
+}
+
+// OnItemChange 道具变化
+message OnItemChange {
+  repeated ItemInfo itemList = 1;
+  string reason = 2;
+  int64 to = 3;
+}

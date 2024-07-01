@@ -1,0 +1,9 @@
+.idea/
+bin/server
+node_modules
+package-lock.json
+temp
+local
+library
+data
+build/

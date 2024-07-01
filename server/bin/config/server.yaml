@@ -1,0 +1,23 @@
+---
+appName: tetris
+isDebug: true
+tokenExpireTime: 15552000000
+appSecret: foobar
+tokenSecret: 04b118d988109e59b84021904f4ec0ccf3a9f89b41309917b893a8e9ea0bed16
+serverPort: ":8000"
+addr: ":23456"
+enableChecksum: true
+
+# redis
+redis:
+  host: 127.0.0.1:6379
+  db: 5
+
+# mongo
+mongo:
+  uri: mongodb://localhost:27017
+  db: happy-fish
+
+# gm白名单
+gmIps: [ ]
+version: 3.0.0

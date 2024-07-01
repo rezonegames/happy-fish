@@ -1,0 +1,16 @@
+{
+  "name": "client",
+  "uuid": "0ea193cb-e7d5-455c-afc8-f792966695af",
+  "creator": {
+    "version": "3.8.2"
+  },
+  "dependencies": {
+    "@types/ws": "^8.5.3",
+    "http": "^0.0.1-security",
+    "ws": "^8.8.1",
+    "protobufjs": "^7.2.5",
+    "long": "^5.2.3",
+    "crypto-es": "^2.1.0",
+    "seedrandom": "^3.0.5"
+  }
+}

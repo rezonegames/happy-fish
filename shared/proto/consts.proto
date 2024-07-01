@@ -1,0 +1,68 @@
+syntax = "proto3";
+package proto;
+option go_package = "/proto";
+
+// AccountType 该结构与consts结构一样，客户端服务器共用，只要定义就不能改变
+enum AccountType {
+  DEVICEID = 0;
+  WX = 1;
+  FB = 2;
+  GIT = 3;
+}
+
+// GameState 暂时这样，以后拆出来，游戏内状态和游戏外状态 todo：
+enum GameState {
+  // 在房间里
+  IDLE = 0;
+  WAIT = 1;
+  // 已分到桌子
+  INGAME = 2;
+  LOGOUT = 3;
+}
+
+// TableState 桌子状态
+enum TableState {
+  GAMING = 0;
+}
+
+// TableAction 桌子的活动状态
+enum TableAction {
+  ADD_USER = 0;
+  LEAVE_USER = 1;
+  BORN_FISH = 2;
+}
+
+// RoomType 房间类型
+enum RoomType {
+  ROOMTYPE_NONE = 0;
+  NORMAL = 1;
+  MATCH = 3;
+}
+
+// ActionType 玩家操作
+enum ActionType {
+  ACTIONTYPE_NONE = 0;
+  // 打中鱼
+  Hit_Fish = 1;
+  // 武器升级
+  Weapon_LevelUp = 2;
+  // 使用技能
+  Skill = 3;
+  // 射击
+  Shoot = 4;
+
+  // 打死鱼， 由服务器触发的行为
+  Kill_Fish = 100;
+}
+
+// ItemType 道具类型
+enum ItemType {
+  COIN = 0;
+}
+
+// NpcState npc状态
+enum NpcState {
+  NPCSTATE_NONE = 0;
+  ALIVE = 1;
+  DIE = 2;
+}

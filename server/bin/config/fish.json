@@ -1,0 +1,90 @@
+[
+  {
+    "fishId": "1",
+    "name": "fish_red",
+    "coin": 10,
+    "hp": 10,
+    "dodgeRate": 10,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "2",
+    "name": "fish_denglong",
+    "coin": 10,
+    "hp": 10,
+    "dodgeRate": 10,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "3",
+    "name": "fish_yellow",
+    "coin": 20,
+    "hp": 30,
+    "dodgeRate": 20,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "4",
+    "name": "fish_bigred",
+    "coin": 20,
+    "hp": 30,
+    "dodgeRate": 20,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "5",
+    "name": "fish_fuyi",
+    "coin": 30,
+    "hp": 50,
+    "dodgeRate": 30,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "6",
+    "name": "fish_gui",
+    "coin": 30,
+    "hp": 50,
+    "dodgeRate": 30,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "7",
+    "name": "fish_hailuoshuimu",
+    "coin": 30,
+    "hp": 50,
+    "dodgeRate": 30,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "8",
+    "name": "fish_hetun",
+    "coin": 40,
+    "hp": 100,
+    "dodgeRate": 40,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "9",
+    "name": "fish_jinshayu",
+    "coin": 40,
+    "hp": 100,
+    "dodgeRate": 40,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "10",
+    "name": "fish_shayu",
+    "coin": 80,
+    "hp": 200,
+    "dodgeRate": 80,
+    "defenceValue": 0
+  },
+  {
+    "fishId": "11",
+    "name": "fish_shuimu",
+    "coin": 50,
+    "hp": 100,
+    "dodgeRate": 50,
+    "defenceValue": 0
+  }
+]
