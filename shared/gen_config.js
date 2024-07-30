@@ -50,6 +50,10 @@ for (let i = 0; i < sheetNames.length; i++) {
     // 同步写入 JSON 数据到文件
     try {
         fs.writeFileSync(`../server/bin/config/${sheetName}.json`, JSON.stringify(result, null, 2));
+        if(["weapon"].includes(sheetName)) {
+            // 客户端需要的表同步到客户端
+            fs.writeFileSync(`../client/assets/game/config/${sheetName}.json`, JSON.stringify(result, null, 2));
+        }
         console.log(`数据已成功同步写入到文件 ${sheetName}`);
     } catch (err) {
         console.error(`写入文件${sheetName}失败:`, err);

@@ -1,14 +1,14 @@
-import {Color, Prefab, Node, instantiate, UITransform, view} from 'cc';
-import {UIConf, uiManager} from "db://assets/core/ui/UIManager";
+import {Color, } from 'cc';
+import {UIConf, uiManager} from "db://assets/core/ui/ui-manager";
 import {DEBUG} from 'cc/env';
-import {Logger} from "db://assets/core/common/Logger";
-import {HttpRequest} from "db://assets/core/network/HttpRequest";
-import {RandomManager} from "db://assets/core/common/RandomManager";
-import {StorageManager} from "db://assets/core/common/StorageManager";
-import {NetManager} from "db://assets/core/network/NetManager";
-import {EventMgr} from "db://assets/core/common/EventManager";
-import {resLoader} from "db://assets/core/res/ResLoader";
-import {NetChannelManager} from "db://assets/game/script/Channel";
+import {Logger} from "db://assets/core/common/logger";
+import {HttpRequest} from "db://assets/core/network/http-request";
+import {RandomManager} from "db://assets/core/common/random-manager";
+import {StorageManager} from "db://assets/core/common/storage-manager";
+import {NetManager} from "db://assets/core/network/net-manager";
+import {EventMgr} from "db://assets/core/common/event-manager";
+import {resLoader} from "db://assets/core/res/res-loader";
+import {NetChannelManager} from "db://assets/game/script/channel";
 
 let colorMap = {
     0: new Color(200, 100, 100),    // 红色
@@ -18,11 +18,9 @@ let colorMap = {
     4: new Color(200, 100, 200),  // 紫色
     5: new Color(100, 200, 200)   // 青色
 }
-
 export function GetTeamColor(teamId): Color {
     return colorMap[teamId];
 }
-
 export enum UIID {
     UILogin,
     UILogin_Guest,
@@ -30,11 +28,9 @@ export enum UIID {
     UIHall,
     UIRoom,
     UIRoom_Table,
-    UIGame,
+    UIFishGround,
 }
-
 const bundle = "game";
-
 export let UICF: { [key: number]: UIConf } = {
     [UIID.UILogin]: {bundle, prefab: "prefab/Login"},
     [UIID.UILogin_Guest]: {bundle, prefab: "prefab/Login_Guest", preventTouch: true},
@@ -42,12 +38,11 @@ export let UICF: { [key: number]: UIConf } = {
     [UIID.UIRoom]: {bundle, prefab: "prefab/Room"},
     [UIID.UIRoom_Table]: {bundle, prefab: "prefab/Room_Table"},
     [UIID.UIRegister]: {bundle, prefab: "prefab/Register"},
-    [UIID.UIGame]: {bundle, prefab: "prefab/Control"},
+    [UIID.UIFishGround]: {bundle, prefab: "prefab/FishGround"},
 }
 
 export class Game {
 
-    // core
     static log = Logger;
     static http: HttpRequest;
     static random = RandomManager.instance;
@@ -56,12 +51,12 @@ export class Game {
     static event = EventMgr;
     static res = resLoader;
     static channel: NetChannelManager
+    static config
 
-    static initGame() {
-        Game.log.logView("game init");
-        // storage
-        Game.storage = new StorageManager();
-
+    static InitGame() {
+        Game.log.logView("game init", "");
+        Game.config = Game.res.get("/config/",  null, "game"); // todo：配置直接加载到内存，不知道对不对
+        Game.storage = new StorageManager(); // storage
         // http连接地址
         Game.http = new HttpRequest();
         let url = "http://127.0.0.1:8000";
@@ -69,34 +64,13 @@ export class Game {
             url = "http://110.40.133.37:8000";
         }
         Game.http.server = url;
-
         // 网络管理器
-        Game.tcp = new NetManager();
-
-        // tcp的上一层
+        Game.tcp = new NetManager(); // tcp的上一层
         Game.channel = new NetChannelManager();
         Game.channel.gameCreate();
-
         // 初始化界面
         uiManager.initUIConf(UICF);
         uiManager.open(UIID.UILogin);
-
         Game.log.logView("game init done");
-    }
-
-    // openLoading todo：启动一个loading，2秒后关闭，可以放在uimanager里，配置一个loading，onopen之后，销毁之
-    static openLoading() {
-        let loadingPrefab = Game.res.get("prefab/Loading", Prefab, "bundle1");
-        let node = instantiate(loadingPrefab);
-        let uiCom = node.getComponent(UITransform);
-        uiCom.setContentSize(view.getVisibleSize());
-        uiCom.priority = 100 - 0.01;
-        node.on(Node.EventType.TOUCH_START, function (event: any) {
-            event.propagationStopped = true;
-        }, node);
-
-        setTimeout(()=>{
-            node.destroy();
-        }, 2000)
     }
 }

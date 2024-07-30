@@ -1,5 +1,5 @@
 import {Component, _decorator, ProgressBar, director, assetManager, Label} from "cc";
-import {resLoader} from "db://assets/core/res/ResLoader";
+import {resLoader} from "db://assets/core/res/res-loader";
 
 
 const {property, ccclass} = _decorator;
@@ -19,7 +19,7 @@ export default class UIExample extends Component {
     start() {
         let [total, taskList, bundleName] = [
             7,
-            ["scene", "script", "texture", "anim", "prefab", "material", "effect"],
+            ["scene", "config", "script", "texture", "anim", "prefab", "material", "effect"],
             "game"
         ];
 

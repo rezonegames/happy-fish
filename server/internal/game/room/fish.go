@@ -1,6 +1,7 @@
 package room
 
 import (
+	"happy-fish/config"
 	"happy-fish/internal/game/util"
 	"happy-fish/pkg/z"
 	"happy-fish/proto/proto"
@@ -11,8 +12,7 @@ import (
 type Fish struct {
 	fishId   string
 	grounds  *FishGrounds
-	fish1    *proto.FishInfo
-	bezier1  *proto.BezierInfo
+	fishInfo *proto.FishInfo
 	life     int32
 	timer    *time.Timer
 	state    proto.NpcState
@@ -20,66 +20,60 @@ type Fish struct {
 	lock     sync.Locker
 }
 
-func NewFish(fishId string, grounds *FishGrounds, fish1 *proto.FishInfo, bezier1 *proto.BezierInfo) *Fish {
+func NewFish(fishId string, grounds *FishGrounds, fishInfo *proto.FishInfo) *Fish {
 	var (
-		fish *Fish
+		fish       *Fish
+		actionList       = make([]*proto.FishAction, 0)
+		nPos             = z.RandInt(3, 5)
+		width      int32 = 1200
+		height     int32 = 760
+		lastX      int32 = 0
+		minX             = width / 3
+		maxX             = width / 5
 	)
-
+	for i := 0; i < nPos; i++ {
+		// 锚点在中间（0，0）
+		var action = &proto.FishAction{
+			X:         -width/2 + lastX + z.RandInt32(minX, maxX),
+			Y:         -height/2 + z.RandInt32(0, height),
+			TweenInfo: config.RandomTween(),
+			Seconds:   z.RandInt32(3, 5),
+		}
+		fish.life += action.Seconds
+		actionList = append(actionList, action)
+	}
+	fishInfo.ActionList = actionList
 	fish = &Fish{
-		fish1:    fish1,
-		bezier1:  bezier1,
+		fishInfo: fishInfo,
 		grounds:  grounds,
 		fishId:   fishId,
 		state:    proto.NpcState_ALIVE,
 		bornTime: z.NowUnixMilli(),
 	}
-
-	for _, v := range bezier1.BezierList {
-		fish.life += v.Seconds
-	}
-
-	// 多少秒之后死亡
-	fish.timer = time.AfterFunc(time.Duration(fish.life+1)*time.Second, fish.Die)
-
-	//log.Debug(grounds.Format("fish %d born life %d seconds", fishId, fish.life))
+	fish.timer = time.AfterFunc(time.Duration(fish.life)*time.Second+100*time.Millisecond, fish.Die)
 	return fish
 }
 
 func (f *Fish) Die() {
-	//log.Debug(f.grounds.Format("fish %d die", f.fishId))
 	f.lock.Lock()
 	defer f.lock.Unlock()
-
 	if f.state == proto.NpcState_DIE {
 		return
 	}
-
 	f.state = proto.NpcState_DIE
 	f.timer.Stop()
 	f.grounds.FishDie(f)
 }
 
+// Hit 应该根据客户端的炮的威力来计算击中的概率
 func (f *Fish) Hit(client util.ClientEntity) bool {
 	if z.RandInt(0, 10) < 5 {
 		f.Die()
-
 		return true
 	}
 	return false
 }
 
 func (f *Fish) GetInfo() *proto.FishInfo {
-	var (
-		name = f.fish1.Name
-		info *proto.FishInfo
-	)
-
-	info = &proto.FishInfo{
-		FishId:   f.fishId,
-		Name:     name,
-		Bezier:   f.bezier1,
-		BornTime: f.bornTime,
-	}
-
-	return info
+	return f.fishInfo
 }

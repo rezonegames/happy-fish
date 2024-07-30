@@ -10,15 +10,15 @@ var (
 	ServerConfig     = &ServerInfo{}
 	FishListConfig   []*proto.FishInfo
 	RoomListConfig   []*proto.RoomInfo
-	BezierListConfig []*proto.BezierInfo
 	WeaponListConfig []*proto.WeaponInfo
+	TweenListConfig  []*proto.TweenInfo
 )
 
 func InitConfig() {
 	z.ReadYaml("server.yaml", ServerConfig)
 	z.ReadJson("fish.json", &FishListConfig)
 	z.ReadJson("room.json", &RoomListConfig)
-	z.ReadJson("bezier.json", &BezierListConfig)
+	z.ReadJson("tween.json", &TweenListConfig)
 	log.Info("InitConfig all done :）")
 }
 
@@ -27,7 +27,7 @@ func RandomFish() *proto.FishInfo {
 	return FishListConfig[z.RandInt(0, len(FishListConfig)-1)]
 }
 
-// RandomBezier 随机一条bezier曲线
-func RandomBezier() *proto.BezierInfo {
-	return BezierListConfig[z.RandInt(0, len(BezierListConfig)-1)]
+// RandomTween 随机返回一个动作
+func RandomTween() *proto.TweenInfo {
+	return TweenListConfig[z.RandInt(0, len(TweenListConfig)-1)]
 }

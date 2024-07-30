@@ -27,7 +27,6 @@ func NewFishGrounds(table util.TableEntity) *FishGrounds {
 	var (
 		fishGrounds *FishGrounds
 	)
-
 	fishGrounds = &FishGrounds{
 		width:   1280,
 		height:  720,
@@ -37,7 +36,6 @@ func NewFishGrounds(table util.TableEntity) *FishGrounds {
 		maxFish: 10,
 		table:   table,
 	}
-
 	return fishGrounds
 }
 
@@ -52,24 +50,18 @@ func (f *FishGrounds) AfterInit() {
 		select {
 		case <-ticker.C:
 			if len(f.fishes) < f.maxFish {
-
 				var (
 					err           error
 					randBornCount = z.RandInt(3, 5)
 					fishList      = make([]*proto.FishInfo, 0)
 				)
-
 				for i := 0; i < randBornCount; i++ {
-
 					var (
 						fish *Fish
 					)
-
 					fish = f.BornFish()
-
 					fishList = append(fishList, fish.GetInfo())
 				}
-
 				// 生成鱼，则下发状态
 				err = f.table.BroadCastTableAction(&proto.OnTableAction{
 					Action:   proto.TableAction_BORN_FISH,
@@ -78,14 +70,12 @@ func (f *FishGrounds) AfterInit() {
 				if err != nil {
 					log.Info(f.table.Format("born fish broadcast err: %+v", err))
 				}
-
 			}
 		case <-f.chEnd:
 			for _, fish := range f.fishes {
 				fish.Die()
 			}
 			f.fishes = make(map[string]*Fish, 0)
-
 			return
 		}
 
@@ -99,21 +89,16 @@ func (f *FishGrounds) Format(format string, v ...interface{}) string {
 
 func (f *FishGrounds) BornFish() *Fish {
 	var (
-		fish       *Fish
-		fishId     string
-		fishConf   = config.RandomFish()
-		bezierConf = config.RandomBezier()
+		fish     *Fish
+		fishId   string
+		fishInfo = config.RandomFish()
 	)
 	f.mu.Lock()
 	defer f.mu.Unlock()
-
 	fishId = strconv.Itoa(f.index)
-
-	fish = NewFish(fishId, f, fishConf, bezierConf)
+	fish = NewFish(fishId, f, fishInfo)
 	f.fishes[fishId] = fish
-
 	f.index += 1
-
 	return fish
 }
 
@@ -131,10 +116,8 @@ func (f *FishGrounds) HitFish(fishId string, client util.ClientEntity) bool {
 	var (
 		fish, ok = f.fishes[fishId]
 	)
-
 	if !ok {
 		return false
 	}
-
 	return fish.Hit(client)
 }

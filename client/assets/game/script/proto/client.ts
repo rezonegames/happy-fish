@@ -44,22 +44,21 @@ export interface RoomInfo {
   tableCount: number;
 }
 
-/** bezier 曲线点 */
-export interface BezierPoint {
-  x: number;
-  y: number;
-  seconds: number;
+export interface TweenInfo {
+  id: string;
 }
 
-export interface BezierInfo {
-  bezierId: number;
-  name: string;
-  bezierList: BezierPoint[];
+/** Point 曲线点 */
+export interface FishAction {
+  x: number;
+  y: number;
+  /** 移动的方式，比如贝塞尔曲线 */
+  tweenInfo: TweenInfo | undefined;
+  seconds: number;
 }
 
 /** 鱼 */
 export interface FishInfo {
-  /** config */
   fishId: string;
   name: string;
   coin: number;
@@ -67,8 +66,7 @@ export interface FishInfo {
   dodgeRate: number;
   defenceValue: number;
   bornTime: number;
-  /** other */
-  bezier: BezierInfo | undefined;
+  actionList: FishAction[];
 }
 
 /** TableInfo 下发桌子信息 */
@@ -605,28 +603,67 @@ export const RoomInfo = {
   },
 };
 
-function createBaseBezierPoint(): BezierPoint {
-  return { x: 0, y: 0, seconds: 0 };
+function createBaseTweenInfo(): TweenInfo {
+  return { id: "" };
 }
 
-export const BezierPoint = {
-  encode(message: BezierPoint, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const TweenInfo = {
+  encode(message: TweenInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): TweenInfo {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTweenInfo();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+};
+
+function createBaseFishAction(): FishAction {
+  return { x: 0, y: 0, tweenInfo: undefined, seconds: 0 };
+}
+
+export const FishAction = {
+  encode(message: FishAction, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.x !== 0) {
       writer.uint32(8).int32(message.x);
     }
     if (message.y !== 0) {
       writer.uint32(16).int32(message.y);
     }
+    if (message.tweenInfo !== undefined) {
+      TweenInfo.encode(message.tweenInfo, writer.uint32(26).fork()).ldelim();
+    }
     if (message.seconds !== 0) {
-      writer.uint32(24).int32(message.seconds);
+      writer.uint32(32).int32(message.seconds);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): BezierPoint {
+  decode(input: _m0.Reader | Uint8Array, length?: number): FishAction {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBezierPoint();
+    const message = createBaseFishAction();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -645,7 +682,14 @@ export const BezierPoint = {
           message.y = reader.int32();
           continue;
         case 3:
-          if (tag !== 24) {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.tweenInfo = TweenInfo.decode(reader, reader.uint32());
+          continue;
+        case 4:
+          if (tag !== 32) {
             break;
           }
 
@@ -661,64 +705,8 @@ export const BezierPoint = {
   },
 };
 
-function createBaseBezierInfo(): BezierInfo {
-  return { bezierId: 0, name: "", bezierList: [] };
-}
-
-export const BezierInfo = {
-  encode(message: BezierInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.bezierId !== 0) {
-      writer.uint32(8).int32(message.bezierId);
-    }
-    if (message.name !== "") {
-      writer.uint32(18).string(message.name);
-    }
-    for (const v of message.bezierList) {
-      BezierPoint.encode(v!, writer.uint32(802).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): BezierInfo {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBezierInfo();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.bezierId = reader.int32();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.name = reader.string();
-          continue;
-        case 100:
-          if (tag !== 802) {
-            break;
-          }
-
-          message.bezierList.push(BezierPoint.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-};
-
 function createBaseFishInfo(): FishInfo {
-  return { fishId: "", name: "", coin: 0, hp: 0, dodgeRate: 0, defenceValue: 0, bornTime: 0, bezier: undefined };
+  return { fishId: "", name: "", coin: 0, hp: 0, dodgeRate: 0, defenceValue: 0, bornTime: 0, actionList: [] };
 }
 
 export const FishInfo = {
@@ -744,8 +732,8 @@ export const FishInfo = {
     if (message.bornTime !== 0) {
       writer.uint32(56).int64(message.bornTime);
     }
-    if (message.bezier !== undefined) {
-      BezierInfo.encode(message.bezier, writer.uint32(802).fork()).ldelim();
+    for (const v of message.actionList) {
+      FishAction.encode(v!, writer.uint32(802).fork()).ldelim();
     }
     return writer;
   },
@@ -811,7 +799,7 @@ export const FishInfo = {
             break;
           }
 
-          message.bezier = BezierInfo.decode(reader, reader.uint32());
+          message.actionList.push(FishAction.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {

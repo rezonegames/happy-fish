@@ -1,0 +1,134 @@
+[
+  {
+    "id": "linear"
+  },
+  {
+    "id": "smooth"
+  },
+  {
+    "id": "fade"
+  },
+  {
+    "id": "constant"
+  },
+  {
+    "id": "quadIn"
+  },
+  {
+    "id": "quadOut"
+  },
+  {
+    "id": "quadInOut"
+  },
+  {
+    "id": "quadOutIn"
+  },
+  {
+    "id": "cubicIn"
+  },
+  {
+    "id": "cubicOut"
+  },
+  {
+    "id": "cubicInOut"
+  },
+  {
+    "id": "cubicOutIn"
+  },
+  {
+    "id": "quartIn"
+  },
+  {
+    "id": "quartOut"
+  },
+  {
+    "id": "quartInOut"
+  },
+  {
+    "id": "quartOutIn"
+  },
+  {
+    "id": "quintIn"
+  },
+  {
+    "id": "quintOut"
+  },
+  {
+    "id": "quintInOut"
+  },
+  {
+    "id": "quintOutIn"
+  },
+  {
+    "id": "sineIn"
+  },
+  {
+    "id": "sineOut"
+  },
+  {
+    "id": "sineInOut"
+  },
+  {
+    "id": "sineOutIn"
+  },
+  {
+    "id": "expoIn"
+  },
+  {
+    "id": "expoOut"
+  },
+  {
+    "id": "expoInOut"
+  },
+  {
+    "id": "expoOutIn"
+  },
+  {
+    "id": "circIn"
+  },
+  {
+    "id": "circOut"
+  },
+  {
+    "id": "circInOut"
+  },
+  {
+    "id": "circOutIn"
+  },
+  {
+    "id": "elasticIn"
+  },
+  {
+    "id": "elasticOut"
+  },
+  {
+    "id": "elasticInOut"
+  },
+  {
+    "id": "elasticOutIn"
+  },
+  {
+    "id": "backIn"
+  },
+  {
+    "id": "backOut"
+  },
+  {
+    "id": "backInOut"
+  },
+  {
+    "id": "backOutIn"
+  },
+  {
+    "id": "bounceIn"
+  },
+  {
+    "id": "bounceOut"
+  },
+  {
+    "id": "bounceInOut"
+  },
+  {
+    "id": "bounceOutIn"
+  }
+]

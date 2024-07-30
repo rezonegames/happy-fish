@@ -12,17 +12,14 @@ type Counter struct {
 }
 
 func GetNextID(collName string) (string, error) {
-
 	var (
 		err    error
 		result Counter
 	)
-
 	// 使用 findOneAndUpdate 来获取并增加计数器
 	err = mClient.FindOneAndUpdate(
 		DB_NAME,
 		COL_COUNTER,
-
 		bson.M{"_id": collName},
 		bson.M{"$inc": bson.M{"counter": 1}},
 		&result,
@@ -31,6 +28,5 @@ func GetNextID(collName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return strconv.Itoa(result.Counter), nil
 }

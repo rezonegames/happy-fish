@@ -56,7 +56,6 @@ func BindAccount(accountId string, userId string) error {
 			},
 		}
 	)
-
 	err = mClient.UpsertOne(DB_NAME, COL_ACCOUNT, filter, update)
 	return err
 }
@@ -66,13 +65,10 @@ func CreateAccount(a *Account) error {
 		err      error
 		insertId any
 	)
-
 	insertId, err = mClient.InsertOne(DB_NAME, COL_ACCOUNT, a)
 	if err != nil {
 		return err
 	}
-
 	log.Info("CreateAccount success: %s", insertId)
-
 	return nil
 }

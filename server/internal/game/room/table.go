@@ -58,11 +58,9 @@ func (t *Table) GetTableInfo() *proto.TableInfo {
 		users     map[string]*proto.UserInfo
 		room1     = t.room1
 	)
-
 	for uid, client := range t.clients {
 		users[uid] = client.GetUserInfo()
 	}
-
 	tableInfo = &proto.TableInfo{
 		TableId:     t.tableId,
 		TableState:  t.state,
@@ -74,7 +72,6 @@ func (t *Table) GetTableInfo() *proto.TableInfo {
 		CreateTime:  t.createTime,
 		Owner:       "",
 	}
-
 	return tableInfo
 }
 
@@ -92,10 +89,9 @@ func (t *Table) Entity(userId string) (util.ClientEntity, error) {
 	return client, nil
 }
 
-// ChangeState 捕鱼桌暂时没有其它的状态，目前不会调用
+// ChangeState todo：捕鱼桌暂时没有其它的状态，目前不会调用
 func (t *Table) ChangeState(state proto.TableState) {
 	t.state = state
-
 	var (
 		err       error
 		tableInfo = t.GetTableInfo()
@@ -117,7 +113,6 @@ func (t *Table) Ready(s *session.Session) error {
 	if err != nil {
 		return err
 	}
-
 	return client.Ready()
 }
 
@@ -128,44 +123,36 @@ func (t *Table) NotifyUpdateFrame(s *session.Session, msg *proto.NotifyUpdateFra
 		uid         = s.UID()
 		client, err = t.Entity(uid)
 	)
-
 	if err != nil {
 		log.Error(t.Format("NotifyUpdateFrame offline %d !!! why", uid))
 		return err
 	}
-
 	switch action.Key {
 	case proto.ActionType_Hit_Fish:
 		var (
 			fishIdList = action.ValList
 			killList   = make([]string, 0)
 		)
-
 		for _, fishId := range fishIdList {
 			if ok := t.fishGrounds.HitFish(fishId, client); ok {
 				killList = append(killList, fishId)
 			}
 		}
 		if len(killList) <= 0 {
-
 			return nil
 		}
-
 		action = &proto.Action{
 			ValList: killList,
 			Key:     proto.ActionType_Kill_Fish,
 		}
-
-	// 直接将响应的操作返回给客户端
+	// todo：直接将响应的操作返回给客户端，需要check金币够不够了
 	case proto.ActionType_Shoot:
 		fallthrough
 	case proto.ActionType_Weapon_LevelUp:
-
 	default:
 		log.Error(t.Format("NotifyUpdateFrame user %d action unknown %s", uid, z.ToString(action)))
 		return nil
 	}
-
 	return t.group.Broadcast("onFrame", &proto.OnFrame{
 		UserId: uid,
 		Action: action,
@@ -191,9 +178,7 @@ func (t *Table) StandUp(s *session.Session) error {
 		uid         = s.UID()
 		standupUser = t.clients[uid]
 	)
-
 	delete(t.clients, uid)
-
 	err = t.BroadCastTableAction(&proto.OnTableAction{
 		Action: proto.TableAction_LEAVE_USER,
 		User:   standupUser.GetUserInfo(),
@@ -205,18 +190,15 @@ func (t *Table) StandUp(s *session.Session) error {
 }
 
 func (t *Table) SitDown(s *session.Session, seatId int32, password string) error {
-
 	if password != t.password {
 		return errors.New("password err")
 	}
-
 	var (
 		uid           = s.UID()
 		myClient      util.ClientEntity
 		seatClientMap = make(map[int32]bool, 0)
 		err           error
 	)
-
 	for k, client := range t.clients {
 		// 不知是什么原因，直接重置session，并拉回
 		if k == uid {
@@ -230,10 +212,8 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 		if clientSeatId == seatId {
 			return errors.New("seat already has user")
 		}
-
 		seatClientMap[clientSeatId] = true
 	}
-
 	// 找到第一个空的座位坐下
 	if seatId == -1 {
 		var i int32
@@ -244,15 +224,12 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 			}
 		}
 	}
-
 	myClient = NewClient(&util.ClientOption{
 		S:      s,
 		SeatId: seatId,
 		Table:  t,
 	})
-
 	t.clients[uid] = myClient
-
 	err = t.BroadCastTableAction(&proto.OnTableAction{
 		Action: proto.TableAction_ADD_USER,
 		User:   myClient.GetUserInfo(),
@@ -260,7 +237,6 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 	if err != nil {
 		log.Info("broadcast add user: %d err: %+v", uid, err)
 	}
-
 	return err
 }
 
@@ -301,8 +277,6 @@ func NewNormalTable(opt *util.TableOption) *Table {
 	// 渔场初始化的工作
 	fishGrounds = NewFishGrounds(table)
 	fishGrounds.AfterInit()
-
 	table.fishGrounds = fishGrounds
-
 	return table
 }

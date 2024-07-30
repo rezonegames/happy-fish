@@ -1,0 +1,51 @@
+[
+  {
+    "weaponId": "1",
+    "level": 1,
+    "name": "weapon_level_1",
+    "hitRate": 10,
+    "attackValue": 10
+  },
+  {
+    "weaponId": "2",
+    "level": 2,
+    "name": "weapon_level_2",
+    "hitRate": 20,
+    "attackValue": 10
+  },
+  {
+    "weaponId": "3",
+    "level": 3,
+    "name": "weapon_level_3",
+    "hitRate": 30,
+    "attackValue": 10
+  },
+  {
+    "weaponId": "4",
+    "level": 4,
+    "name": "weapon_level_4",
+    "hitRate": 40,
+    "attackValue": 10
+  },
+  {
+    "weaponId": "5",
+    "level": 5,
+    "name": "weapon_level_5",
+    "hitRate": 50,
+    "attackValue": 10
+  },
+  {
+    "weaponId": "6",
+    "level": 6,
+    "name": "weapon_level_6",
+    "hitRate": 60,
+    "attackValue": 10
+  },
+  {
+    "weaponId": "7",
+    "level": 7,
+    "name": "weapon_level_7",
+    "hitRate": 70,
+    "attackValue": 10
+  }
+]

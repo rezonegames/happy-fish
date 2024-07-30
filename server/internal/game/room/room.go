@@ -25,7 +25,6 @@ func (r *Room) QuickStart(s *session.Session) error {
 		tableInfo *proto.TableInfo
 		err       error
 	)
-
 	for _, v := range r.tables {
 		tableInfo = v.GetTableInfo()
 		if len(tableInfo.Users) < 6 {
@@ -33,34 +32,28 @@ func (r *Room) QuickStart(s *session.Session) error {
 			break
 		}
 	}
-
 	if suitTable == nil {
-
 		suitTable, err = r.CreateTable(s, fmt.Sprintf("%s:%d", r.roomId, r.index), "")
 		if err != nil {
 			return err
 		}
 		r.index += 1
 	}
-
 	// 加入房间
 	err = r.Join(s)
 	if err != nil {
 		return err
 	}
-
 	// 加入桌子
 	err = suitTable.Join(s)
 	if err != nil {
 		return err
 	}
-
 	// 坐下
 	err = suitTable.SitDown(s, -1, "")
 	if err != nil {
 		return err
 	}
-
 	// 准备开始
 	return suitTable.Ready(s)
 }
@@ -88,19 +81,15 @@ func (r *Room) tryLeaveTable(s *session.Session) error {
 		rs, err = models.GetSession(uid)
 		table   util.TableEntity
 	)
-
 	if err == nil {
-
 		table, err = r.Entity(rs.TableId)
 		if err == nil {
-
 			// 先站起来
 			err = table.StandUp(s)
 			if err != nil {
 
 				return err
 			}
-
 			// 再离开房间
 			err = table.Leave(s)
 			if err != nil {
@@ -117,11 +106,9 @@ func (r *Room) Leave(s *session.Session) error {
 		uid = s.UID()
 		err = r.tryLeaveTable(s)
 	)
-
 	if err != nil {
 		return err
 	}
-
 	models.RemoveSession(uid)
 	return r.group.Leave(s)
 }
@@ -131,12 +118,10 @@ func (r *Room) Join(s *session.Session) error {
 		uid = s.UID()
 		err error
 	)
-
 	err = models.SetRoomId(uid, r.roomId)
 	if err != nil {
 		return err
 	}
-
 	return r.group.Add(s)
 }
 
@@ -149,9 +134,7 @@ func (r *Room) CreateTable(s *session.Session, tableId, password string) (util.T
 		CustomTableId: tableId,
 		Password:      password,
 	})
-
 	r.tables[tableId] = table
-
 	return table, nil
 }
 
@@ -168,9 +151,7 @@ func (r *Room) Entity(tableId string) (util.TableEntity, error) {
 		table util.TableEntity
 		ok    bool
 	)
-
 	table, ok = r.tables[tableId]
-
 	if !ok {
 		return nil, z.NilError{Msg: tableId}
 	}
@@ -190,7 +171,6 @@ func (r *Room) GetTableList(from int32, limit int32) []*proto.TableInfo {
 	var (
 		tableList = make([]*proto.TableInfo, 0)
 	)
-
 	for _, v := range r.tables {
 		tableList = append(tableList, v.GetTableInfo())
 	}
@@ -203,13 +183,11 @@ func NewNormalRoom(opt *util.RoomOption) *Room {
 		roomId = room1.RoomId
 		room   *Room
 	)
-
 	room = &Room{
 		roomId: roomId,
 		group:  nano.NewGroup(roomId),
 		room1:  room1,
 		tables: make(map[string]util.TableEntity, 0),
 	}
-
 	return room
 }

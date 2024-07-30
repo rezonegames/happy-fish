@@ -6,15 +6,15 @@ import {
     IProtocolHelper,
     NetCallFunc,
     NetData
-} from "db://assets/core/network/NetInterface";
-import {NetNode} from "db://assets/core/network/NetNode";
+} from "db://assets/core/network/net-interface";
+import {NetNode} from "db://assets/core/network/net-node";
 import {ErrorCode} from "db://assets/game/script/proto/error";
 import {Message} from "db://assets/game/script/nano/message";
-import {WebSock} from "db://assets/core/network/WebSock";
+import {WebSock} from "db://assets/core/network/websocket";
 import {GameState, TableState} from "db://assets/game/script/proto/consts";
-import {uiManager} from "db://assets/core/ui/UIManager";
-import {EventMgr} from "db://assets/core/common/EventManager";
-import {Game, UIID} from "db://assets/game/script/Game";
+import {uiManager} from "db://assets/core/ui/ui-manager";
+import {EventMgr} from "db://assets/core/common/event-manager";
+import {Game, UIID} from "db://assets/game/script/game";
 import {LoginToGame, LoginToGameResp, OnFrame, OnGameState, OnTableAction} from "db://assets/game/script/proto/client";
 
 enum NetChannelType {

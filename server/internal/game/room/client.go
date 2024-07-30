@@ -13,7 +13,7 @@ type Client struct {
 	s           *session.Session
 	resProgress int32
 	joinTime    int64
-	coin        int64
+	coin        int64 // todo：为带入金币，
 	seatId      int32
 	hitRate     int32
 	weapon      *proto.WeaponInfo
@@ -75,9 +75,9 @@ func NewNormalClient(opt *util.ClientOption) *Client {
 		seatId  = opt.SeatId
 		user, _ = util.GetPlayer(s)
 		now     = z.NowUnixMilli()
+		client  *Client
 	)
-
-	client := &Client{
+	client = &Client{
 		user: &proto.UserInfo{
 			Name:      user.Name,
 			UserId:    user.UserId,

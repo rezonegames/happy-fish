@@ -42,22 +42,21 @@ message RoomInfo {
   int32 tableCount = 100;
 }
 
-// bezier 曲线点
-message BezierPoint {
-  int32 x = 1;
-  int32 y = 2;
-  int32 seconds = 3;
+message TweenInfo {
+  string id = 1;
 }
 
-message BezierInfo {
-  int32 bezierId = 1;
-  string name = 2;
-  repeated BezierPoint bezierList = 100;
+// Point 曲线点
+message FishAction {
+  int32 x = 1;
+  int32 y = 2;
+  // 移动的方式，比如贝塞尔曲线
+  TweenInfo tweenInfo = 3;
+  int32 seconds = 4;
 }
 
 // 鱼
 message FishInfo {
-  // config
   string fishId = 1;
   string name = 2;
   int32 coin = 3;
@@ -65,8 +64,7 @@ message FishInfo {
   int32 dodgeRate = 5;
   int32 defenceValue = 6;
   int64 bornTime = 7;
-  // other
-  BezierInfo bezier = 100;
+  repeated FishAction actionList = 100;
 }
 
 // TableInfo 下发桌子信息
