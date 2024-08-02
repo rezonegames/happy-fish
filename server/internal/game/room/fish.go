@@ -17,7 +17,7 @@ type Fish struct {
 	timer    *time.Timer
 	state    proto.NpcState
 	bornTime int64
-	lock     sync.Locker
+	lock     sync.Mutex
 }
 
 func NewFish(fishId string, grounds *FishGrounds, fishInfo *proto.FishInfo) *Fish {
@@ -31,6 +31,13 @@ func NewFish(fishId string, grounds *FishGrounds, fishInfo *proto.FishInfo) *Fis
 		minX             = width / 3
 		maxX             = width / 5
 	)
+	fish = &Fish{
+		fishInfo: fishInfo,
+		grounds:  grounds,
+		fishId:   fishId,
+		state:    proto.NpcState_ALIVE,
+		bornTime: z.NowUnixMilli(),
+	}
 	for i := 0; i < nPos; i++ {
 		// 锚点在中间（0，0）
 		var action = &proto.FishAction{
@@ -42,14 +49,7 @@ func NewFish(fishId string, grounds *FishGrounds, fishInfo *proto.FishInfo) *Fis
 		fish.life += action.Seconds
 		actionList = append(actionList, action)
 	}
-	fishInfo.ActionList = actionList
-	fish = &Fish{
-		fishInfo: fishInfo,
-		grounds:  grounds,
-		fishId:   fishId,
-		state:    proto.NpcState_ALIVE,
-		bornTime: z.NowUnixMilli(),
-	}
+	fish.fishInfo.ActionList = actionList
 	fish.timer = time.AfterFunc(time.Duration(fish.life)*time.Second+100*time.Millisecond, fish.Die)
 	return fish
 }

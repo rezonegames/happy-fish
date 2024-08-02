@@ -49,7 +49,7 @@ func StartUp() {
 	}
 
 	opts := []nano.Option{
-		//nano.WithDebugMode(),
+		nano.WithDebugMode(),
 		// websocket
 		nano.WithWSPath("/nano"),
 		nano.WithIsWebsocket(true),
@@ -62,6 +62,5 @@ func StartUp() {
 			return true
 		}),
 	}
-
 	nano.Listen(sc.Addr, opts...)
 }

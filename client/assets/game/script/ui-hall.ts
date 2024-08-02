@@ -12,26 +12,25 @@ import {Game, UIID} from "db://assets/game/script/game";
 import {CallbackObject} from "db://assets/core/network/net-interface";
 import {ErrorCode} from "db://assets/game/script/proto/error";
 import {uiManager} from "db://assets/core/ui/ui-manager";
+import {SuperLayout} from "db://assets/core/components/super-layout";
+import HallRoom from "db://assets/game/script/hall-room";
 
 const {ccclass, property} = _decorator;
 
 @ccclass
 export default class UIHall extends UIView {
 
-    @property(ListView)
-    private listView: ListView
-
+    @property(SuperLayout) layout!:SuperLayout;
+    protected roomList: any[] = [];
     intervalTimer
 
     public onOpen(fromUI: number, ...args: any): void {
         super.onOpen(fromUI, ...args);
-        setTimeout(() => {
-            this.getRoomList();
-        }, 100);
-        // 房间列表每5秒刷新一次
+        // 刷新房间列表
+        this.getRoomList();
         this.intervalTimer = setInterval(() => {
             this.getRoomList();
-        }, 5000);
+        }, 60000);
     }
 
     onClose(): any {
@@ -39,71 +38,26 @@ export default class UIHall extends UIView {
         clearInterval(this.intervalTimer);
     }
 
-    refreshHallList(roomList: RoomInfo[]) {
-        this.listView.setDelegate({
-            items: () => roomList,
-            reuse: (itemNode: Node, item: RoomInfo) => {
-                itemNode.getChildByName("name").getComponent(Label).string = `房间：${item.roomId}`;
-                itemNode.getChildByName("desc").getComponent(Label).string = `信息：${item.name}`;
-                itemNode.getChildByName("count").getComponent(Label).string = `人数：${item.userCount}`;
+    onRefreshEvent(item: Node, index: number) {
+        item.getComponent(HallRoom)?.show(this.roomList[index], index, this.onClickItem.bind(this))
+    }
 
-                // 快速开始
-                let quickStart = itemNode.getChildByName("quickstart");
-                quickStart.off("click");
-                quickStart.on("click", () => {
-                    let buf = QuickStart.encode({roomId: item.roomId}).finish()
-                    let rspObject: CallbackObject = {
-                        target: this,
-                        callback: (cmd: number, data: any) => {
-                            let resp = QuickStartResp.decode(data.body);
-                            Game.log.logNet(resp, "快速开始");
-                            if (resp.code == ErrorCode.OK) {
-
-                                // todo：进入渔场
-
-                            }
-                        }
-                    }
-                    Game.channel.gameRequest("r.quickstart", buf, rspObject);
-                }, this)
-
-                // 进入房间
-                let enter = itemNode.getChildByName("enter");
-                enter.off("click");
-                enter.on("click", () => {
-                    let buf = JoinRoom.encode({roomId: item.roomId}).finish()
-                    let rspObject: CallbackObject = {
-                        target: this,
-                        callback: (cmd: number, data: any) => {
-                            let resp = JoinRoomResp.decode(data.body);
-                            Game.log.logNet(resp, "进入房间");
-                            if (resp.code == ErrorCode.OK) {
-                                uiManager.open(UIID.UIRoom, resp.roomInfo)
-                            }
-                        }
-                    }
-                    Game.channel.gameRequest("r.joinroom", buf, rspObject);
-                }, this)
-            }
-
-        });
-        this.listView.reload();
+    onClickItem(index: number) {
     }
 
     getRoomList() {
         if (!uiManager.isTopUI(UIID.UIHall)) {
             return;
         }
-        let buf = GetRoomList.encode({}).finish()
-        let rspObject: CallbackObject = {
+        Game.channel.gameRequest("r.getroomlist", GetRoomList.encode({}).finish(), {
             target: this,
             callback: (cmd: number, data: any) => {
                 let resp = GetRoomListResp.decode(data.body);
                 if (resp.code == ErrorCode.OK) {
-                    this.refreshHallList(resp.roomList);
+                    this.roomList = resp.roomList;
+                    this.layout.total(this.roomList.length);
                 }
             }
-        }
-        Game.channel.gameRequest("r.getroomlist", buf, rspObject);
+        });
     }
 }

@@ -1,15 +1,4 @@
 import { ISocket, INetworkTips, IProtocolHelper, RequestObject, CallbackObject, NetData, NetCallFunc } from "./net-interface";
-
-/*
-*   CocosCreator网络节点基类，以及网络相关接口定义
-*   1. 网络连接、断开、请求发送、数据接收等基础功能
-*   2. 心跳机制
-*   3. 断线重连 + 请求重发
-*   4. 调用网络屏蔽层
-*
-*   2018-5-7 by 宝爷
-*/
-
 type ExecuterFunc = (callback: CallbackObject, buffer: NetData) => void;
 type CheckFunc = (checkedFunc : VoidFunc ) => void;
 type VoidFunc = () => void;

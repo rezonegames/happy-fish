@@ -6,7 +6,6 @@ const {ccclass, property} = _decorator;
 
 @ccclass
 export default class Fish extends Component {
-    @property(SpriteAtlas) atlas: SpriteAtlas = null;
     @property(Animation) anim: Animation = null;
     lastPosition: Vec3 = null; // 计算角度用的
     fishInfo: FishInfo
@@ -29,7 +28,7 @@ export default class Fish extends Component {
             bornTime,
             actionList,
         } = this.fishInfo;
-        this.node.getComponent(Sprite).spriteFrame = this.atlas.getSpriteFrame(name + "_run_0");
+        this.node.getComponent(Sprite).spriteFrame = this.fishGround.getSpriteFrame(name + "_run_0");
         this.anim.play(name + "_run");
         let bornPos = actionList[0];
         this.node.parent = find("canvas");

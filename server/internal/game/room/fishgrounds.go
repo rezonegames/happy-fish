@@ -43,43 +43,39 @@ func (f *FishGrounds) AfterInit() {
 	var (
 		ticker = time.NewTicker(time.Second)
 	)
-
 	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			if len(f.fishes) < f.maxFish {
-				var (
-					err           error
-					randBornCount = z.RandInt(3, 5)
-					fishList      = make([]*proto.FishInfo, 0)
-				)
-				for i := 0; i < randBornCount; i++ {
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if len(f.fishes) < f.maxFish {
 					var (
-						fish *Fish
+						err           error
+						randBornCount = z.RandInt(3, 5)
+						fishList      = make([]*proto.FishInfo, 0)
 					)
-					fish = f.BornFish()
-					fishList = append(fishList, fish.GetInfo())
+					for i := 0; i < randBornCount; i++ {
+						var (
+							fish *Fish
+						)
+						fish = f.BornFish()
+						fishList = append(fishList, fish.GetInfo())
+					}
+					// 生成鱼，则下发状态
+					err = f.table.BroadCastTableAction(&proto.OnTableAction{
+						Action:   proto.TableAction_BORN_FISH,
+						FishList: fishList,
+					})
+					if err != nil {
+						log.Info(f.table.Format("born fish broadcast err: %+v", err))
+					}
 				}
-				// 生成鱼，则下发状态
-				err = f.table.BroadCastTableAction(&proto.OnTableAction{
-					Action:   proto.TableAction_BORN_FISH,
-					FishList: fishList,
-				})
-				if err != nil {
-					log.Info(f.table.Format("born fish broadcast err: %+v", err))
-				}
+			case <-f.chEnd:
+				f.fishes = make(map[string]*Fish, 0)
+				return
 			}
-		case <-f.chEnd:
-			for _, fish := range f.fishes {
-				fish.Die()
-			}
-			f.fishes = make(map[string]*Fish, 0)
-			return
 		}
-
-	}
+	}()
 
 }
 
@@ -103,7 +99,6 @@ func (f *FishGrounds) BornFish() *Fish {
 }
 
 func (f *FishGrounds) GetInfo() {
-
 }
 
 func (f *FishGrounds) FishDie(fish *Fish) {

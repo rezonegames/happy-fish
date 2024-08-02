@@ -19,20 +19,17 @@ func NewClient(opt *util.ClientOption) util.ClientEntity {
 // NewTable 根据桌子类型创建道具桌还是正常桌
 func NewTable(opt *util.TableOption) util.TableEntity {
 	var (
-		room1    = opt.Room.GetConfig()
+		roomInfo = opt.Room.GetConfig()
 		table    util.TableEntity
-		roomType = room1.Type
+		roomType = roomInfo.Type
 	)
-
 	switch roomType {
 	case proto.RoomType_NORMAL:
 		table = NewNormalTable(opt)
-
 	default:
 		panic(fmt.Sprintf("NewTable unknown type %s", roomType))
 	}
 	table.AfterInit()
-
 	log.Info(table.Format("NewTable start %d", roomType))
 	return table
 }
@@ -43,15 +40,12 @@ func NewRoom(opt *util.RoomOption) util.RoomEntity {
 		room1 = opt.Room1
 		room  util.RoomEntity
 	)
-
 	switch room1.Type {
 	case proto.RoomType_NORMAL:
 		room = NewNormalRoom(opt)
-
 	default:
 		panic(fmt.Sprintf("NewRoom unknown type %s", room1.Type))
 	}
-
 	log.Info(room.Format("NewRoom %s", z.ToString(room1)))
 	room.AfterInit()
 	return room

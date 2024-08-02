@@ -56,7 +56,6 @@ func (r *RoomService) Entity(roomId string) (util.RoomEntity, error) {
 	if !ok {
 		return nil, z.NilError{Msg: roomId}
 	}
-
 	return room, nil
 }
 
@@ -72,7 +71,6 @@ func (r *RoomService) GetRoomFromSession(s *session.Session) (util.RoomEntity, e
 		return nil, err
 	}
 	roomId = rs.RoomId
-
 	return r.Entity(roomId)
 }
 
@@ -88,12 +86,10 @@ func (r *RoomService) GetTableFromSession(s *session.Session) (util.TableEntity,
 	if err != nil {
 		return nil, err
 	}
-
 	room, err = r.Entity(rs.RoomId)
 	if err != nil {
 		return nil, err
 	}
-
 	table, err = room.Entity(rs.TableId)
 	if err != nil {
 		return nil, err
@@ -105,7 +101,6 @@ func (r *RoomService) GetRoomList(s *session.Session, _ *proto.GetRoomList) erro
 	var (
 		roomList = make([]*proto.RoomInfo, 0)
 	)
-
 	for _, v := range config.RoomListConfig {
 		var (
 			roomId    = v.RoomId
@@ -114,10 +109,8 @@ func (r *RoomService) GetRoomList(s *session.Session, _ *proto.GetRoomList) erro
 		if err != nil {
 			continue
 		}
-
 		roomList = append(roomList, room.GetRoomInfo())
 	}
-
 	return s.Response(&proto.GetRoomListResp{
 		Code:     proto.ErrorCode_OK,
 		RoomList: roomList,
@@ -137,13 +130,11 @@ func (r *RoomService) GetTableList(s *session.Session, msg *proto.GetTableList) 
 		code = proto.ErrorCode_RoomNotKnown
 		goto EXIT
 	}
-
 	tableList = room.GetTableList(from, limit)
 	return s.Response(&proto.GetTableListResp{
 		Code:      code,
 		TableList: tableList,
 	})
-
 EXIT:
 	return s.Response(&proto.GetTableListResp{
 		Code: code,
@@ -157,29 +148,24 @@ func (r *RoomService) JoinRoom(s *session.Session, msg *proto.JoinRoom) error {
 		oldRoom   util.RoomEntity
 		code      = proto.ErrorCode_OK
 	)
-
 	if err != nil {
 		code = proto.ErrorCode_RoomNotKnown
 		goto EXIT
 	}
-
 	if oldRoom, err = r.GetRoomFromSession(s); err == nil {
 		if err = oldRoom.Leave(s); err != nil {
 			code = proto.ErrorCode_AlreadyInRoom
 			goto EXIT
 		}
 	}
-
 	if err = room.Join(s); err != nil {
 		code = proto.ErrorCode_JoinError
 		goto EXIT
 	}
-
 	return s.Response(&proto.JoinRoomResp{
 		Code:     code,
 		RoomInfo: room.GetRoomInfo(),
 	})
-
 EXIT:
 	return s.Response(&proto.JoinRoomResp{
 		Code: code,
@@ -192,17 +178,14 @@ func (r *RoomService) LeaveRoom(s *session.Session, _ *proto.LeaveRoom) error {
 		err  error
 		code = proto.ErrorCode_OK
 	)
-
 	room, err = r.GetRoomFromSession(s)
 	if err != nil {
 		goto EXIT
 	}
-
 	err = room.Leave(s)
 	if err != nil {
 		code = proto.ErrorCode_LeaveError
 	}
-
 EXIT:
 	return s.Response(&proto.LeaveRoomResp{
 		Code: code,
@@ -218,7 +201,6 @@ func (r *RoomService) CreateTable(s *session.Session, msg *proto.CreateTable) er
 		room     util.RoomEntity
 		code     = proto.ErrorCode_OK
 	)
-
 	room, err = r.GetRoomFromSession(s)
 	if err != nil {
 		code = proto.ErrorCode_NotJoinRoomError
@@ -234,7 +216,6 @@ func (r *RoomService) CreateTable(s *session.Session, msg *proto.CreateTable) er
 		Code:  code,
 		Table: table.GetTableInfo(),
 	})
-
 EXIT:
 	return s.Response(&proto.CreateTableResp{
 		Code: code,
@@ -258,11 +239,9 @@ func (r *RoomService) KickUser(s *session.Session, msg *proto.KickUser) error {
 		code = proto.ErrorCode_KickUserError
 		goto EXIT
 	}
-
 	return s.Response(&proto.KickUserResp{
 		Code: code,
 	})
-
 EXIT:
 	return s.Response(&proto.KickUserResp{
 		Code: code,
@@ -277,13 +256,11 @@ func (r *RoomService) JoinTable(s *session.Session, msg *proto.JoinTable) error 
 		room    util.RoomEntity
 		code    = proto.ErrorCode_OK
 	)
-
 	room, err = r.GetRoomFromSession(s)
 	if err != nil {
 		code = proto.ErrorCode_NotJoinRoomError
 		goto EXIT
 	}
-
 	table, err = room.Entity(tableId)
 	if err != nil {
 		code = proto.ErrorCode_TableNotKnown
@@ -297,7 +274,6 @@ func (r *RoomService) JoinTable(s *session.Session, msg *proto.JoinTable) error 
 	return s.Response(&proto.JoinTableResp{
 		Code: code,
 	})
-
 EXIT:
 	return s.Response(&proto.JoinTableResp{
 		Code:  code,
@@ -311,17 +287,14 @@ func (r *RoomService) LeaveTable(s *session.Session, _ *proto.LeaveTable) error 
 		err   error
 		code  = proto.ErrorCode_OK
 	)
-
 	if table, err = r.GetTableFromSession(s); err != nil {
 		// 解散等原因，直接返回成功
 		goto EXIT
 	}
-
 	if err = table.Leave(s); err != nil {
 		code = proto.ErrorCode_LeaveTableError
 		goto EXIT
 	}
-
 EXIT:
 	return s.Response(&proto.LeaveTableResp{
 		Code: code,
@@ -336,18 +309,15 @@ func (r *RoomService) SitDown(s *session.Session, msg *proto.SitDown) error {
 		table    util.TableEntity
 		code     = proto.ErrorCode_OK
 	)
-
 	if table, err = r.GetTableFromSession(s); err != nil {
 		code = proto.ErrorCode_NotJoinTableError
 		goto EXIT
 	}
-
 	err = table.SitDown(s, seatId, password)
 	if err != nil {
 		code = proto.ErrorCode_SitDownError
 		goto EXIT
 	}
-
 EXIT:
 	return s.Response(&proto.SitDownResp{
 		Code: code,
@@ -360,19 +330,15 @@ func (r *RoomService) StandUp(s *session.Session, _ *proto.StandUp) error {
 		err   error
 		code  = proto.ErrorCode_OK
 	)
-
 	if table, err = r.GetTableFromSession(s); err != nil {
 		code = proto.ErrorCode_TableNotKnown
 		goto EXIT
 	}
-
 	if err = table.StandUp(s); err != nil {
 		code = proto.ErrorCode_StandUpErrpr
 		goto EXIT
 	}
-
 EXIT:
-
 	return s.Response(&proto.StandUpResp{
 		Code: code,
 	})
@@ -384,25 +350,27 @@ func (r *RoomService) QuickStart(s *session.Session, msg *proto.QuickStart) erro
 		room, err = r.Entity(roomId)
 		code      = proto.ErrorCode_OK
 		oldRoom   util.RoomEntity
+		table     util.TableEntity
 	)
 	if err != nil {
 		code = proto.ErrorCode_RoomNotKnown
 		goto EXIT
 	}
-
 	if oldRoom, err = r.GetRoomFromSession(s); err == nil {
 		if err = oldRoom.Leave(s); err != nil {
 			code = proto.ErrorCode_AlreadyInRoom
 			goto EXIT
 		}
 	}
-
-	err = room.QuickStart(s)
+	table, err = room.QuickStart(s)
 	if err != nil {
 		code = proto.ErrorCode_QuickStartError
 		goto EXIT
 	}
-
+	return s.Response(&proto.QuickStartResp{
+		Code:      proto.ErrorCode_OK,
+		TableInfo: table.GetTableInfo(),
+	})
 EXIT:
 	return s.Response(&proto.QuickStartResp{Code: code})
 }
@@ -413,12 +381,10 @@ func (r *RoomService) Ready(s *session.Session, _ *proto.NotifyReady) error {
 		table util.TableEntity
 		err   error
 	)
-
 	table, err = r.GetTableFromSession(s)
 	if err != nil {
 		return err
 	}
-
 	return table.Ready(s)
 }
 
@@ -428,7 +394,6 @@ func (r *RoomService) UpdateFrame(s *session.Session, msg *proto.NotifyUpdateFra
 		table util.TableEntity
 		err   error
 	)
-
 	table, err = r.GetTableFromSession(s)
 	if err != nil {
 		return err
@@ -444,26 +409,22 @@ func (r *RoomService) ResumeTable(s *session.Session, msg *proto.ResumeTable) er
 		uid   = s.UID()
 		code  = proto.ErrorCode_OK
 	)
-
 	table, err = r.GetTableFromSession(s)
 	if err != nil {
 		models.RemoveSession(uid)
 		code = proto.ErrorCode_TableDismissError
 		goto EXIT
 	}
-
 	err = table.ResumeTable(s)
 	if err != nil {
 		models.RemoveSession(uid)
 		code = proto.ErrorCode_UnknownError
 		goto EXIT
 	}
-
 	// 包括桌子信息与帧信息
 	return s.Response(&proto.ResumeTableResp{
 		Code: code,
 	})
-
 EXIT:
 	return s.Response(&proto.ResumeTableResp{
 		Code: code,

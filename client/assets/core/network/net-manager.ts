@@ -1,12 +1,6 @@
 import { NetNode, NetConnectOptions } from "./net-node";
 import { NetData, CallbackObject } from "./net-interface";
 
-/*
-*   网络节点管理类
-*
-*   2019-10-8 by 宝爷
-*/
-
 export class NetManager {
     private static _instance: NetManager;
     protected _channels: { [key: number]: NetNode } = {};

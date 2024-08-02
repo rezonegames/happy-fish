@@ -1,9 +1,3 @@
-/**
- * 资源泄露检查类，可以用于跟踪资源的引用情况
- * 
- * 2021-1-31 by 宝爷
- */
-
 import { Asset } from "cc";
 import { ResUtil } from "./res-util";
 

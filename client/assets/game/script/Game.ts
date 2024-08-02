@@ -1,4 +1,4 @@
-import {Color, } from 'cc';
+import {Color, JsonAsset} from 'cc';
 import {UIConf, uiManager} from "db://assets/core/ui/ui-manager";
 import {DEBUG} from 'cc/env';
 import {Logger} from "db://assets/core/common/logger";
@@ -21,28 +21,26 @@ let colorMap = {
 export function GetTeamColor(teamId): Color {
     return colorMap[teamId];
 }
+
 export enum UIID {
     UILogin,
     UILogin_Guest,
     UIRegister,
     UIHall,
-    UIRoom,
-    UIRoom_Table,
     UIFishGround,
+    UIToast,
 }
 const bundle = "game";
 export let UICF: { [key: number]: UIConf } = {
-    [UIID.UILogin]: {bundle, prefab: "prefab/Login"},
-    [UIID.UILogin_Guest]: {bundle, prefab: "prefab/Login_Guest", preventTouch: true},
-    [UIID.UIHall]: {bundle, prefab: "prefab/Hall"},
-    [UIID.UIRoom]: {bundle, prefab: "prefab/Room"},
-    [UIID.UIRoom_Table]: {bundle, prefab: "prefab/Room_Table"},
-    [UIID.UIRegister]: {bundle, prefab: "prefab/Register"},
-    [UIID.UIFishGround]: {bundle, prefab: "prefab/FishGround"},
+    [UIID.UILogin]: {bundle, prefab: "prefab/login"},
+    [UIID.UILogin_Guest]: {bundle, prefab: "prefab/login-guest", preventTouch: true},
+    [UIID.UIRegister]: {bundle, prefab: "prefab/register"},
+    [UIID.UIHall]: {bundle, prefab: "prefab/hall"},
+    [UIID.UIFishGround]: {bundle, prefab: "prefab/fish-ground", preventTouch: true},
+    [UIID.UIToast]: {bundle, prefab: "prefab/toast", preventTouch: true},
 }
 
 export class Game {
-
     static log = Logger;
     static http: HttpRequest;
     static random = RandomManager.instance;
@@ -51,11 +49,11 @@ export class Game {
     static event = EventMgr;
     static res = resLoader;
     static channel: NetChannelManager
-    static config
+    static config: any = {};
 
     static InitGame() {
         Game.log.logView("game init", "");
-        Game.config = Game.res.get("/config/",  null, "game"); // todo：配置直接加载到内存，不知道对不对
+        Game.config.weapon = Game.res.get("/config/weapon",  JsonAsset, bundle).json;
         Game.storage = new StorageManager(); // storage
         // http连接地址
         Game.http = new HttpRequest();

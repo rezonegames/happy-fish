@@ -1,8 +1,4 @@
-/*
-*   事件管理器，事件的监听、触发、移除
-*   
-*   2018-9-20 by 宝爷
-*/
+
 export type EventManagerCallFunc = (eventName: string, eventData: any) => void;
 
 import { log, warn } from "cc";

@@ -1,14 +1,4 @@
 import { ISocket, MessageFunc, NetData } from "./net-interface";
-
-/*
-*   WebSocket封装
-*   1. 连接/断开相关接口
-*   2. 网络异常回调
-*   3. 数据发送与接收
-*   
-*   2018-5-14 by 宝爷
-*/
-
 type Connected =  (event : any) => void;
 
 export class WebSock implements ISocket {

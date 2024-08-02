@@ -19,7 +19,7 @@ type Client struct {
 	weapon      *proto.WeaponInfo
 }
 
-func (n *Client) SetWeapon(weaponId int32) {
+func (n *Client) SetWeapon(weaponId string) {
 	for _, v := range config.WeaponListConfig {
 		if v.WeaponId == weaponId {
 			n.weapon = v
@@ -34,7 +34,8 @@ func (n *Client) GetWeapon() *proto.WeaponInfo {
 
 func (n *Client) Ready() error {
 	//TODO implement me
-	panic("implement me")
+	//panic("implement me")
+	return nil
 }
 
 func (n *Client) GetUserInfo() *proto.UserInfo {

@@ -1,11 +1,3 @@
-/*
- * @Author: steveJobs
- * @Email: icipiqkm@gmail.com
- * @Date: 2021-8-1 01:15:04
- * @Last Modified by: steveJobs
- * @Last Modified time: 2021-8-1 14:35:43
- * @Description: 
- */
 import { _decorator, Node, EventTouch, SystemEventType, Vec3, Vec2, ScrollView, EventHandler, PageView, EventMouse } from 'cc';
 import { SuperLayout } from './super-layout';
 const { ccclass, property } = _decorator;

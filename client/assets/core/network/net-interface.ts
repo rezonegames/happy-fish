@@ -1,10 +1,4 @@
 
-/*
-*   网络相关接口定义
-*   
-*   2019-10-8 by 宝爷
-*/
-
 export type NetData = (string | ArrayBufferLike | Blob | ArrayBufferView);
 export type NetCallFunc = (cmd: number, data: any) => void;
 

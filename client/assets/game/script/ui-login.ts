@@ -11,13 +11,13 @@ const {ccclass, property} = _decorator;
 @ccclass
 export default class UILogin extends UIView {
 
-    @property(Label) uri: Label
-    @property(Node) connect: Node
-
-    private adder: string;
+    @property(Label) info!: Label
+    @property(Node) connect!: Node
+    @property(Label) adder!: Label;
 
     onOpen(fromUI: number, ...args) {
         super.onOpen(fromUI, ...args);
+        Game.log.logView("UILogin", "UILogin");
         this.clearConnect();
     }
 
@@ -27,15 +27,16 @@ export default class UILogin extends UIView {
     }
 
     setConnect(resp: AccountLoginResp) {
-        this.adder = resp.addr;
-        let name = resp.name;
+        this.adder.string = resp.addr;
+        let info;
         if (resp.userId == "") {
-            name = "无账号，登录游戏后注册";
+            info = "No Account, Connect to server and Register, Happy Happy";
         } else {
             // 账号基本信息保存在本地
             Game.storage.setUser(resp.userId);
+            info = `userId: ${resp.userId} name: ${resp.name}`;
         }
-        this.uri.string = name;
+        this.info.string = info;
         this.connect.active = true
     }
 
@@ -63,6 +64,7 @@ export default class UILogin extends UIView {
     }
 
     onWeiXinLogin() {
+        uiManager.open(UIID.UIToast, "waiting！！！！")
     }
 
     onFacebookLogin() {
@@ -70,6 +72,7 @@ export default class UILogin extends UIView {
 
     onConnect() {
         Game.channel.gameClose();
-        Game.channel.gameConnect(this.adder);
+
+        Game.channel.gameConnect(this.adder.string);
     }
 }

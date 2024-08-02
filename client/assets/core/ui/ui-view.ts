@@ -16,8 +16,6 @@ import { ResKeeper} from "../res/res-keeper";
  * 7. 界面打开动画播放结束回调（动画播放完回调）
  * 8. 界面关闭回调
  * 9. 界面置顶回调
- * 
- * 2018-8-28 by 宝爷
  */
 
 const { ccclass, property } = _decorator;

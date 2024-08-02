@@ -84,7 +84,6 @@ class NetNodeGame extends NetNode {
 
     constructor() {
         super();
-
         // 连接之后，需要发handshake
         this._connectedCallback = () => {
             let msg = {
@@ -100,15 +99,6 @@ class NetNodeGame extends NetNode {
             Game.log.logNet(msg, "handshake");
         }
         this._reconnetTimeOut = 8000;
-
-        // 连接关闭回调
-        this._disconnectCallback = (): boolean => {
-            if (this.isAutoReconnect()) {
-                this.isReconnecting = true;
-                return true;
-            }
-            return false;
-        }
     }
 
     onHandAck() {
@@ -118,13 +108,11 @@ class NetNodeGame extends NetNode {
         // 第一次连接
         let uid = Game.storage.getUser();
         Game.log.logView(uid, "账号");
-
         // 如果没有账户，就打开注册窗口
         if (uid === "") {
             uiManager.replace(UIID.UIRegister);
             return;
         }
-
         let buf = LoginToGame.encode({userId: uid}).finish();
         let rspObject: CallbackObject = {
             target: this,
@@ -137,17 +125,14 @@ class NetNodeGame extends NetNode {
                         this.isReconnecting = false;
                     }
                     Game.event.raiseEvent("onUserInfo", resp.user);
-
                     if (resp.tableId != "") {
                         // 如果tableId不为空，resumeTable，进入游戏
                         this.resumeTable();
                         return;
                     }
-
                     // 进入大厅
                     uiManager.replace(UIID.UIHall);
                 } else {
-
                     Game.log.logNet(resp, "登录失败");
                 }
             }
@@ -156,7 +141,6 @@ class NetNodeGame extends NetNode {
     }
 
     resumeTable() {
-
     }
 
     encode(reqId: number, route: string, data: any): Uint8Array {
@@ -238,7 +222,7 @@ export class NetChannelManager {
         this.game.init(new WebSock(), new GameProtocol(), new NetTips());
         Game.tcp.setNetNode(this.game, NetChannelType.Game);
 
-        // 根据游戏状态切换界面
+        // todo：根据游戏状态切换界面
         this.gameAddListener("onState", (cmd, data: any) => {
             let resp = OnGameState.decode(data.body);
             Game.log.logNet(resp, "onState");
@@ -252,7 +236,6 @@ export class NetChannelManager {
                             break;
                     }
                     break
-
                 case GameState.WAIT:
                     break;
             }

@@ -1,22 +1,20 @@
-import { director, Prefab } from "cc";
-import { log } from "cc";
-import { isValid } from "cc";
-import { view } from "cc";
-import { UITransform } from "cc";
-import { instantiate } from "cc";
-import { Node } from "cc";
-import { ProgressCallback, resLoader } from "../res/res-loader";
-import { UIView, UIShowTypes } from "./ui-view";
+import {director, Prefab} from "cc";
+import {log} from "cc";
+import {isValid} from "cc";
+import {view} from "cc";
+import {UITransform} from "cc";
+import {instantiate} from "cc";
+import {Node} from "cc";
+import {ProgressCallback, resLoader} from "../res/res-loader";
+import {UIView, UIShowTypes} from "./ui-view";
 
 /**
  * UIManager界面管理类
- * 
+ *
  * 1.打开界面，根据配置自动加载界面、调用初始化、播放打开动画、隐藏其他界面、屏蔽下方界面点击
  * 2.关闭界面，根据配置自动关闭界面、播放关闭动画、恢复其他界面
  * 3.切换界面，与打开界面类似，但是是将当前栈顶的界面切换成新的界面（先关闭再打开）
  * 4.提供界面缓存功能
- * 
- * 2018-8-28 by 宝爷
  */
 
 /** UI栈结构体 */
@@ -108,7 +106,7 @@ export class UIManager {
         let child = director.getScene()!.getChildByName('Canvas');
         child!.addChild(node);
         uiCom.priority = zOrder - 0.01;
-       return node;
+        return node;
     }
 
     /** 自动执行下一个待关闭或待打开的界面 */
@@ -186,14 +184,14 @@ export class UIManager {
         }
 
         // 找到UI配置
-        let [bundle, uiPath] = [this.UIConf[uiId].bundle ,this.UIConf[uiId].prefab];
-        if (null == uiPath || null == bundle ) {
+        let [bundle, uiPath] = [this.UIConf[uiId].bundle, this.UIConf[uiId].prefab];
+        if (null == uiPath || null == bundle) {
             log(`getOrCreateUI ${uiId} faile, prefab/bundle conf not found!`);
             completeCallback(null);
             return;
         }
 
-        resLoader.load(bundle, uiPath, processCallback, (err:Error, prefab:Prefab) => {
+        resLoader.load(bundle, uiPath, processCallback, (err: Error, prefab: Prefab) => {
             // 检查加载资源错误
             if (err) {
                 log(`getOrCreateUI loadRes ${uiId} faile, path: ${uiPath} error: ${err}`);
@@ -241,7 +239,7 @@ export class UIManager {
         uiInfo.uiView = uiView;
         uiView.node.active = true;
         let uiCom = uiView.getComponent(UITransform);
-        if(!uiCom) {
+        if (!uiCom) {
             uiCom = uiView.addComponent(UITransform);
         }
 
@@ -321,7 +319,6 @@ export class UIManager {
         if (this.UIConf[uiId].preventTouch) {
             uiInfo.preventNode = this.preventTouch(uiInfo.zOrder);
         }
-
         this.isOpening = true;
         // 预加载资源，并在资源加载完成后自动打开界面
         this.getOrCreateUI(uiId, progressCallback, (uiView: UIView | null): void => {
@@ -336,7 +333,6 @@ export class UIManager {
                 }
                 return;
             }
-
             // 打开UI，执行配置
             this.onUIOpen(uiId, uiView, uiInfo, uiArgs);
             this.isOpening = false;
@@ -457,7 +453,7 @@ export class UIManager {
      * 关闭界面，一直关闭到顶部为uiId的界面，为避免循环打开UI导致UI栈溢出
      * @param uiId 要关闭到的uiId（关闭其顶部的ui）
      * @param uiArgs 打开的参数
-     * @param bOpenSelf 
+     * @param bOpenSelf
      */
     public closeToUI(uiId: number, uiArgs: any, bOpenSelf = true): void {
         let idx = this.getUIIndex(uiId);
@@ -537,7 +533,7 @@ export class UIManager {
         return null;
     }
 
-    public getTopUI(): UIView | null{
+    public getTopUI(): UIView | null {
         if (this.UIStack.length > 0) {
             return this.UIStack[this.UIStack.length - 1].uiView;
         }

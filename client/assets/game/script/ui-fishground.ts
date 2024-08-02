@@ -1,4 +1,4 @@
-import {_decorator, Label, Prefab, NodePool, Vec3, Node, instantiate, SpriteAtlas} from "cc";
+import {_decorator, Label, Prefab, NodePool, Vec3, Node, instantiate, SpriteAtlas, SpriteFrame} from "cc";
 import {UIView} from "db://assets/core/ui/ui-view";
 import {EventMgr} from "db://assets/core/common/event-manager";
 import {OnFrame, UserInfo, TableInfo, OnTableAction, FishInfo} from "db://assets/game/script/proto/client";
@@ -36,9 +36,13 @@ export default class UIFishGround extends UIView {
     // 鱼群
     fishMap: { [key: string]: Fish } = {};
 
+    getSpriteFrame(name: string): SpriteFrame {
+        return this.spAtlas.getSpriteFrame(name);
+    }
+
     public onOpen(fromUI: number, ...args: any): void {
         super.onOpen(fromUI, ...args);
-        EventMgr.addEventListener("onState", this.onState, this);
+        EventMgr.addEventListener("onTableAction", this.onTableAction, this);
         EventMgr.addEventListener("onFrame", this.onFrame, this);
         let tableInfo = args[0] as TableInfo;
         let {
@@ -52,7 +56,7 @@ export default class UIFishGround extends UIView {
 
     public onClose(): any {
         super.onClose();
-        EventMgr.removeEventListener("onState", this.onState, this);
+        EventMgr.removeEventListener("onTableAction", this.onTableAction, this);
         EventMgr.removeEventListener("onFrame", this.onFrame, this);
     }
 

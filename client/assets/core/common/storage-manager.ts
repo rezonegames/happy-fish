@@ -1,6 +1,6 @@
 import { sys } from "cc";
 import { PREVIEW } from "cc/env";
-import {EncryptUtil} from "../utils/EncryptUtil";
+import {EncryptUtil} from "../utils/encrypt";
 
 /** 本地存储 */
 export class StorageManager {

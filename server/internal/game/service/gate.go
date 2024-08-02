@@ -24,7 +24,7 @@ func (g *GateService) AfterInit() {
 	session.Lifetime.OnClosed(func(s *session.Session) {
 		if s.UID() != "" {
 			if err := g.offline(s); err != nil {
-				log.Error("user exit UID=%d, Error=%s", s.UID, err.Error())
+				log.Error("user exit UID=%s, Error=%s", s.UID, err.Error())
 			}
 		}
 	})
@@ -38,15 +38,12 @@ func (g *GateService) online(s *session.Session, user *models.User) error {
 	var (
 		uid = user.UserId
 	)
-
 	if ps, err := g.group.Member(uid); err == nil {
-		log.Info("close old connect %d", ps.UID())
+		log.Info("close old connect %s", ps.UID())
 		g.group.Leave(ps)
 		ps.Close()
 	}
-
-	log.Info("user: %d on-line", uid)
-
+	log.Info("user: %s on-line", uid)
 	return util.BindUser(s, user)
 }
 
@@ -57,12 +54,10 @@ func (g *GateService) Register(s *session.Session, msg *proto.RegisterGameReq) e
 		err       error
 		code      = proto.ErrorCode_OK
 	)
-
 	if accountId == "" {
 		code = proto.ErrorCode_AccountIdError
 		goto EXIT
 	}
-
 	user, err = models.CreateUser(msg.Name, "", 100)
 	if err != nil {
 		goto EXIT
@@ -71,12 +66,10 @@ func (g *GateService) Register(s *session.Session, msg *proto.RegisterGameReq) e
 	if err != nil {
 		goto EXIT
 	}
-
 	err = g.online(s, user)
 	if err != nil {
 		goto EXIT
 	}
-
 	return s.Response(&proto.RegisterGameResponse{
 		Code: code,
 		User: user.ConvToProto(),
@@ -96,23 +89,19 @@ func (g *GateService) Login(s *session.Session, msg *proto.LoginToGame) error {
 		err             error
 		user            *models.User
 	)
-
 	user, err = models.GetUser(uid)
 	if err != nil {
 		return err
 	}
-
 	err = g.online(s, user)
 	if err != nil {
 		return err
 	}
-
 	// 返回所在的房间号和桌子号
 	if rs, err = models.GetSession(uid); err == nil {
 		roomId = rs.RoomId
 		tableId = rs.TableId
 	}
-
 	return s.Response(&proto.LoginToGameResp{
 		Code:    proto.ErrorCode_OK,
 		RoomId:  roomId,

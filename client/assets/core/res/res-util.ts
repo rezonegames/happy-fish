@@ -1,11 +1,6 @@
 import { instantiate, Node, Asset, Prefab } from "cc";
 import { ResKeeper } from "./res-keeper";
 import { CompleteCallback, ProgressCallback } from "./res-loader";
-/**
- * 资源使用相关工具类
- * 2020-1-18 by 宝爷
- */
-
 export class ResUtil {
     /**
      * 开始加载资源

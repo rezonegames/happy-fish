@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	ServerConfig     = &ServerInfo{}
+	ServerConfig     *ServerInfo
 	FishListConfig   []*proto.FishInfo
 	RoomListConfig   []*proto.RoomInfo
 	WeaponListConfig []*proto.WeaponInfo
@@ -15,10 +15,11 @@ var (
 )
 
 func InitConfig() {
-	z.ReadYaml("server.yaml", ServerConfig)
+	z.ReadYaml("server.yaml", &ServerConfig)
 	z.ReadJson("fish.json", &FishListConfig)
 	z.ReadJson("room.json", &RoomListConfig)
 	z.ReadJson("tween.json", &TweenListConfig)
+	z.ReadJson("weapon.json", &WeaponListConfig)
 	log.Info("InitConfig all done :）")
 }
 

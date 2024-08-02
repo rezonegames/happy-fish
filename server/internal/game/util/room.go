@@ -20,7 +20,7 @@ type RoomEntity interface {
 	Entity(tableId string) (TableEntity, error)
 	GetRoomInfo() *proto.RoomInfo
 	GetTableList(from int32, limit int32) []*proto.TableInfo
-	QuickStart(s *session.Session) error
+	QuickStart(s *session.Session) (TableEntity, error)
 }
 
 type TableOption struct {
@@ -78,6 +78,6 @@ type ClientEntity interface {
 	AfterInit()
 	GetJoinTime() int64
 	Ready() error
-	SetWeapon(weaponId int32)
+	SetWeapon(weaponId string)
 	GetWeapon() *proto.WeaponInfo
 }

@@ -1,11 +1,3 @@
-/**
- * ResLoader2，封装资源的加载和卸载接口，隐藏新老资源底层差异
- * 1. 加载资源接口
- * 2. 卸载资源接口
- * 
- * 2021-1-24 by 宝爷
- */
-
 import { Asset, js, error, Constructor, resources, __private, assetManager, AssetManager } from "cc";
 export type ProgressCallback = __private._cocos_asset_asset_manager_deprecated__LoadProgressCallback;
 export type CompleteCallback<T = any> = any;       // (error: Error | null, asset: T) => void;  (error: Error | null, asset: T[], urls: string[]) => void;

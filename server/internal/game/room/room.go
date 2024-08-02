@@ -12,14 +12,14 @@ import (
 )
 
 type Room struct {
-	group  *nano.Group
-	room1  *proto.RoomInfo
-	tables map[string]util.TableEntity
-	roomId string
-	index  int
+	group    *nano.Group
+	roomInfo *proto.RoomInfo
+	tables   map[string]util.TableEntity
+	roomId   string
+	index    int
 }
 
-func (r *Room) QuickStart(s *session.Session) error {
+func (r *Room) QuickStart(s *session.Session) (util.TableEntity, error) {
 	var (
 		suitTable util.TableEntity
 		tableInfo *proto.TableInfo
@@ -35,27 +35,27 @@ func (r *Room) QuickStart(s *session.Session) error {
 	if suitTable == nil {
 		suitTable, err = r.CreateTable(s, fmt.Sprintf("%s:%d", r.roomId, r.index), "")
 		if err != nil {
-			return err
+			return nil, err
 		}
 		r.index += 1
 	}
 	// 加入房间
 	err = r.Join(s)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// 加入桌子
 	err = suitTable.Join(s)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// 坐下
 	err = suitTable.SitDown(s, -1, "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// 准备开始
-	return suitTable.Ready(s)
+	return suitTable, suitTable.Ready(s)
 }
 
 func (r *Room) AfterInit() {
@@ -139,7 +139,7 @@ func (r *Room) CreateTable(s *session.Session, tableId, password string) (util.T
 }
 
 func (r *Room) GetConfig() *proto.RoomInfo {
-	return r.room1
+	return r.roomInfo
 }
 
 func (r *Room) OnTableDeleted(tableId string) {
@@ -160,7 +160,7 @@ func (r *Room) Entity(tableId string) (util.TableEntity, error) {
 
 func (r *Room) GetRoomInfo() *proto.RoomInfo {
 	var (
-		roomInfo = r.room1
+		roomInfo = r.roomInfo
 	)
 	roomInfo.TableCount = int32(len(r.tables))
 	return roomInfo
@@ -184,10 +184,10 @@ func NewNormalRoom(opt *util.RoomOption) *Room {
 		room   *Room
 	)
 	room = &Room{
-		roomId: roomId,
-		group:  nano.NewGroup(roomId),
-		room1:  room1,
-		tables: make(map[string]util.TableEntity, 0),
+		roomId:   roomId,
+		group:    nano.NewGroup(roomId),
+		roomInfo: room1,
+		tables:   make(map[string]util.TableEntity, 0),
 	}
 	return room
 }

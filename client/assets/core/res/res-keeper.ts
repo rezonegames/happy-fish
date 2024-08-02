@@ -1,13 +1,5 @@
 import { Asset, Component, _decorator } from "cc";
 import { AssetType, CompleteCallback, ProgressCallback, resLoader } from "./res-loader";
-/**
- * 资源引用类
- * 1. 提供加载功能，并记录加载过的资源
- * 2. 在node释放时自动清理加载过的资源
- * 3. 支持手动添加记录
- * 
- * 2019-12-13 by 宝爷
- */
 const { ccclass } = _decorator;
 
 @ccclass

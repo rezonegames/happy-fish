@@ -55,7 +55,7 @@ func (t *Table) Format(format string, v ...interface{}) string {
 func (t *Table) GetTableInfo() *proto.TableInfo {
 	var (
 		tableInfo *proto.TableInfo
-		users     map[string]*proto.UserInfo
+		users     = make(map[string]*proto.UserInfo, 0)
 		room1     = t.room1
 	)
 	for uid, client := range t.clients {
@@ -184,7 +184,7 @@ func (t *Table) StandUp(s *session.Session) error {
 		User:   standupUser.GetUserInfo(),
 	})
 	if err != nil {
-		log.Info(t.Format("broadcast leave user: %d err: %+v", uid, err))
+		log.Info(t.Format("broadcast leave user: %s err: %+v", uid, err))
 	}
 	return err
 }
@@ -235,8 +235,9 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 		User:   myClient.GetUserInfo(),
 	})
 	if err != nil {
-		log.Info("broadcast add user: %d err: %+v", uid, err)
+		log.Info(t.Format("broadcast add user: %s err: %+v", uid, err))
 	}
+	log.Info(t.Format("user: %s SitDown success :)", uid))
 	return err
 }
 

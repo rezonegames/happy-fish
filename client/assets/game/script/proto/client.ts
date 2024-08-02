@@ -15,7 +15,7 @@ export interface ItemInfo {
 /** 武器 */
 export interface WeaponInfo {
   /** config */
-  weaponId: number;
+  weaponId: string;
   name: string;
   hitRate: number;
   attackValue: number;
@@ -258,6 +258,7 @@ export interface QuickStart {
 
 export interface QuickStartResp {
   code: ErrorCode;
+  tableInfo: TableInfo | undefined;
 }
 
 /** NotifyReady 准备 */
@@ -356,13 +357,13 @@ export const ItemInfo = {
 };
 
 function createBaseWeaponInfo(): WeaponInfo {
-  return { weaponId: 0, name: "", hitRate: 0, attackValue: 0 };
+  return { weaponId: "", name: "", hitRate: 0, attackValue: 0 };
 }
 
 export const WeaponInfo = {
   encode(message: WeaponInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.weaponId !== 0) {
-      writer.uint32(8).int32(message.weaponId);
+    if (message.weaponId !== "") {
+      writer.uint32(10).string(message.weaponId);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -384,11 +385,11 @@ export const WeaponInfo = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
+          if (tag !== 10) {
             break;
           }
 
-          message.weaponId = reader.int32();
+          message.weaponId = reader.string();
           continue;
         case 2:
           if (tag !== 18) {
@@ -2314,13 +2315,16 @@ export const QuickStart = {
 };
 
 function createBaseQuickStartResp(): QuickStartResp {
-  return { code: 0 };
+  return { code: 0, tableInfo: undefined };
 }
 
 export const QuickStartResp = {
   encode(message: QuickStartResp, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.code !== 0) {
       writer.uint32(8).int32(message.code);
+    }
+    if (message.tableInfo !== undefined) {
+      TableInfo.encode(message.tableInfo, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -2338,6 +2342,13 @@ export const QuickStartResp = {
           }
 
           message.code = reader.int32() as any;
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.tableInfo = TableInfo.decode(reader, reader.uint32());
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {

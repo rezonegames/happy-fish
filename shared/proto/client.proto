@@ -13,7 +13,7 @@ message ItemInfo {
 // 武器
 message WeaponInfo {
   // config
-  int32 weaponId = 1;
+  string weaponId = 1;
   string name = 2;
   int32 hitRate = 3;
   int32 attackValue = 4;
@@ -239,6 +239,7 @@ message QuickStart {
 
 message QuickStartResp {
   ErrorCode code = 1;
+  TableInfo tableInfo = 2;
 }
 
 // NotifyReady 准备
