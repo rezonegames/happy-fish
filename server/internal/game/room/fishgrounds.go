@@ -28,30 +28,34 @@ func NewFishGrounds(table util.TableEntity) *FishGrounds {
 		fishGrounds *FishGrounds
 	)
 	fishGrounds = &FishGrounds{
-		width:   1280,
-		height:  720,
+		//width:   1280,
+		//height:  720,
 		index:   0,
 		fishes:  make(map[string]*Fish, 0),
 		chEnd:   make(chan bool, 6),
-		maxFish: 10,
+		maxFish: 30,
 		table:   table,
 	}
 	return fishGrounds
 }
 
 func (f *FishGrounds) AfterInit() {
-	var (
-		ticker = time.NewTicker(time.Second)
-	)
-	defer ticker.Stop()
+
 	go func() {
+		var (
+			// todo：一分钟检测一次，在测试服，
+			ticker = time.NewTicker(time.Second * 2)
+		)
+		defer ticker.Stop()
+
 		for {
 			select {
 			case <-ticker.C:
-				if len(f.fishes) < f.maxFish {
+				// 不要空跑，没意义，也可以empty，解散之
+				if len(f.fishes) < f.maxFish && !f.table.IsEmpty() {
 					var (
 						err           error
-						randBornCount = z.RandInt(3, 5)
+						randBornCount = z.RandInt(2, 6)
 						fishList      = make([]*proto.FishInfo, 0)
 					)
 					for i := 0; i < randBornCount; i++ {
@@ -67,8 +71,9 @@ func (f *FishGrounds) AfterInit() {
 						FishList: fishList,
 					})
 					if err != nil {
-						log.Info(f.table.Format("born fish broadcast err: %+v", err))
+						log.Info(f.table.Format("AfterInit born fish broadcast err: %+v", err))
 					}
+					//log.Info(f.table.Format("born fish success: %+v", fishList))
 				}
 			case <-f.chEnd:
 				f.fishes = make(map[string]*Fish, 0)

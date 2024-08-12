@@ -6,6 +6,7 @@ import (
 	"github.com/lonng/nano/session"
 	"github.com/pkg/errors"
 	"happy-fish/internal/game/util"
+	"happy-fish/models"
 	"happy-fish/pkg/log"
 	"happy-fish/pkg/z"
 	"happy-fish/proto/proto"
@@ -30,11 +31,8 @@ type Table struct {
 }
 
 func (t *Table) BroadCastTableAction(action *proto.OnTableAction) error {
-	var (
-		err error
-	)
-	err = t.group.Broadcast("onTableAction", action)
-	return err
+	_ = t.group.Broadcast("onTableAction", action)
+	return nil
 }
 
 func (t *Table) AfterInit() {
@@ -165,33 +163,47 @@ func (t *Table) ResumeTable(s *session.Session) error {
 }
 
 func (t *Table) Leave(s *session.Session) error {
+	var (
+		uid = s.UID()
+	)
+	models.RemoveTableId(uid)
 	return t.group.Leave(s)
 }
 
 func (t *Table) Join(s *session.Session) error {
+	var (
+		err     error
+		uid     = s.UID()
+		tableId = t.tableId
+	)
+	err = models.SetTableId(uid, tableId)
+	if err != nil {
+		return err
+	}
 	return t.group.Add(s)
 }
 
 func (t *Table) StandUp(s *session.Session) error {
 	var (
-		err         error
-		uid         = s.UID()
-		standupUser = t.clients[uid]
+		uid             = s.UID()
+		standUpUser, ok = t.clients[uid]
 	)
 	delete(t.clients, uid)
-	err = t.BroadCastTableAction(&proto.OnTableAction{
-		Action: proto.TableAction_LEAVE_USER,
-		User:   standupUser.GetUserInfo(),
-	})
-	if err != nil {
-		log.Info(t.Format("broadcast leave user: %s err: %+v", uid, err))
+	if ok {
+		t.BroadCastTableAction(&proto.OnTableAction{
+			Action: proto.TableAction_LEAVE_USER,
+			User:   standUpUser.GetUserInfo(),
+		})
 	}
-	return err
+	return nil
 }
 
 func (t *Table) SitDown(s *session.Session, seatId int32, password string) error {
 	if password != t.password {
 		return errors.New("password err")
+	}
+	if _, ok := t.clients[s.UID()]; ok {
+		return errors.New("already sit in seat, please stand up and resit")
 	}
 	var (
 		uid           = s.UID()
@@ -208,7 +220,6 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 		var (
 			clientSeatId = client.GetSeatId()
 		)
-
 		if clientSeatId == seatId {
 			return errors.New("seat already has user")
 		}
@@ -230,14 +241,11 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 		Table:  t,
 	})
 	t.clients[uid] = myClient
-	err = t.BroadCastTableAction(&proto.OnTableAction{
+	t.BroadCastTableAction(&proto.OnTableAction{
 		Action: proto.TableAction_ADD_USER,
 		User:   myClient.GetUserInfo(),
 	})
-	if err != nil {
-		log.Info(t.Format("broadcast add user: %s err: %+v", uid, err))
-	}
-	log.Info(t.Format("user: %s SitDown success :)", uid))
+	log.Info(t.Format("SitDown success user: %s :)", uid))
 	return err
 }
 
@@ -253,6 +261,10 @@ func (t *Table) GetSeatClient(seatId int32) (util.ClientEntity, bool) {
 		}
 	}
 	return nil, false
+}
+
+func (t *Table) IsEmpty() bool {
+	return len(t.clients) <= 0
 }
 
 func NewNormalTable(opt *util.TableOption) *Table {

@@ -1,7 +1,6 @@
 package room
 
 import (
-	"happy-fish/config"
 	"happy-fish/internal/game/util"
 	"happy-fish/pkg/z"
 	"happy-fish/proto/proto"
@@ -24,27 +23,33 @@ func NewFish(fishId string, grounds *FishGrounds, fishInfo *proto.FishInfo) *Fis
 	var (
 		fish       *Fish
 		actionList       = make([]*proto.FishAction, 0)
-		nPos             = z.RandInt(3, 5)
-		width      int32 = 1200
-		height     int32 = 760
-		lastX      int32 = 0
-		minX             = width / 3
-		maxX             = width / 5
+		nPos             = z.RandInt32(4, 4)
+		width      int32 = 1480
+		height     int32 = 720
+		i          int32
 	)
 	fish = &Fish{
-		fishInfo: fishInfo,
+		fishInfo: &proto.FishInfo{
+			FishId:       fishInfo.FishId,
+			Name:         fishInfo.Name,
+			Coin:         fishInfo.Coin,
+			Hp:           fishInfo.Coin,
+			DodgeRate:    fishInfo.DodgeRate,
+			DefenceValue: fishInfo.DefenceValue,
+			ActionList:   nil,
+		},
 		grounds:  grounds,
 		fishId:   fishId,
 		state:    proto.NpcState_ALIVE,
 		bornTime: z.NowUnixMilli(),
 	}
-	for i := 0; i < nPos; i++ {
+	for i = 0; i < nPos; i++ {
 		// 锚点在中间（0，0）
 		var action = &proto.FishAction{
-			X:         -width/2 + lastX + z.RandInt32(minX, maxX),
-			Y:         -height/2 + z.RandInt32(0, height),
-			TweenInfo: config.RandomTween(),
-			Seconds:   z.RandInt32(3, 5),
+			X: -width/2 + i*(width/(nPos-1)),
+			Y: -height/2 + z.RandInt32(0, height),
+			//TweenInfo: config.RandomTween(),
+			Seconds: z.RandInt32(4, 6),
 		}
 		fish.life += action.Seconds
 		actionList = append(actionList, action)

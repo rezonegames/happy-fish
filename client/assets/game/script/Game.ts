@@ -58,6 +58,7 @@ export class Game {
         // http连接地址
         Game.http = new HttpRequest();
         let url = "http://127.0.0.1:8000";
+        // let url = "http://192.168.8.27:8000";
         if (!DEBUG) {
             url = "http://110.40.133.37:8000";
         }

@@ -26,14 +26,20 @@ func NewRoomService() *RoomService {
 func (r *RoomService) AfterInit() {
 	// 处理玩家断开连接
 	session.Lifetime.OnClosed(func(s *session.Session) {
-		for _, v := range r.rooms {
-			var (
-				conf   = v.GetConfig()
-				roomId = conf.RoomId
-			)
-			err := v.Leave(s)
-			if err != nil {
-				log.Info("user %d leave room %s err %+v", s.UID(), roomId, err)
+		var (
+			uid     = s.UID()
+			rs, err = models.GetSession(uid)
+		)
+		log.Info("AfterInit before user: %s leave", uid)
+		if err != nil {
+			return
+		}
+		for roomId, v := range r.rooms {
+			if rs.RoomId == roomId {
+				err = v.Leave(s)
+				if err != nil {
+					log.Info("AfterInit user: %s leave err: %+v", uid, err)
+				}
 			}
 		}
 	})

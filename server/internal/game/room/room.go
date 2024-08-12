@@ -59,15 +59,13 @@ func (r *Room) QuickStart(s *session.Session) (util.TableEntity, error) {
 }
 
 func (r *Room) AfterInit() {
-
 }
 
 func (r *Room) BeforeShutdown() {
 	for _, uid := range r.group.Members() {
-		log.Info(r.Format("BeforeShutdown leave user %d", uid))
+		log.Info(r.Format("BeforeShutdown leave user %s", uid))
 		models.RemoveSession(uid)
 	}
-	log.Info(r.Format("BeforeShutdown room"))
 }
 
 func (r *Room) Format(format string, v ...interface{}) string {
@@ -87,15 +85,14 @@ func (r *Room) tryLeaveTable(s *session.Session) error {
 			// 先站起来
 			err = table.StandUp(s)
 			if err != nil {
-
 				return err
 			}
 			// 再离开房间
 			err = table.Leave(s)
 			if err != nil {
-
 				return err
 			}
+			log.Info(r.Format("tryLeaveTable user: %s leave table: %s success", uid, rs.TableId))
 		}
 	}
 	return nil
@@ -166,7 +163,6 @@ func (r *Room) GetRoomInfo() *proto.RoomInfo {
 	return roomInfo
 }
 
-// GetTableList todo：map如何按照from,limit返回列表
 func (r *Room) GetTableList(from int32, limit int32) []*proto.TableInfo {
 	var (
 		tableList = make([]*proto.TableInfo, 0)

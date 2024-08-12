@@ -22,10 +22,8 @@ func NewGateService() *GateService {
 func (g *GateService) AfterInit() {
 	// Fixed: 玩家WIFI切换到4G网络不断开, 重连时，将UID设置为illegalSessionUid
 	session.Lifetime.OnClosed(func(s *session.Session) {
-		if s.UID() != "" {
-			if err := g.offline(s); err != nil {
-				log.Error("user exit UID=%s, Error=%s", s.UID, err.Error())
-			}
+		if err := g.offline(s); err != nil {
+			log.Error("user exit UID=%s, Error=%s", s.UID, err.Error())
 		}
 	})
 }

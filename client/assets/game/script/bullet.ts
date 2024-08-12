@@ -1,4 +1,5 @@
-import {_decorator, Component, Sprite, Vec3} from "cc";
+import {_decorator, Component, Sprite, find, UITransform, v3, v2, RigidBody2D, Contact2DType,
+    Collider2D, IPhysics2DContact} from "cc";
 import Client from "db://assets/game/script/client";
 import UIFishGround from "db://assets/game/script/ui-fishground";
 import {Game} from "db://assets/game/script/game";
@@ -10,47 +11,62 @@ const {ccclass, property} = _decorator;
 
 @ccclass
 export default class Bullet extends Component {
-
     level: number = 1;
-    speed: number = 10;
-    client: Client = null;
-    fishGround: UIFishGround = null;
-    direction: Vec3 = null;
+    speed: number = 60;
+    client: Client;
+    fishGround: UIFishGround;
+    @property(RigidBody2D) rigidbody: RigidBody2D;
 
-    initBullet(pos: Vec3, level: number, client: Client, fishGround: UIFishGround) {
+    initBullet(angle: number, level: number, client: Client, fishGround: UIFishGround) {
+        this.node.parent = find("Canvas");
+        this.node.getComponent(UITransform).priority = 20;
         this.level = level;
-        // let weaponList = Game.config.weapon;
-        // let weaponInfo = weaponList.filter(w => w.level === level);
-        this.client = client;
         this.fishGround = fishGround;
-        this.node.getComponent(Sprite).spriteFrame = this.fishGround.spAtlas.getSpriteFrame(`bullet_${level}`);
-        let dir = pos.subtract(this.client.getWeaponPosition());
-        let angle = Math.atan2(dir.y, dir.x);
-        let degree = angle / Math.PI * 180;
-        this.node.angle = -degree;
-        this.direction = dir;
+        this.client = client;
+        this.node.getComponent(Sprite).spriteFrame = this.fishGround.getSpriteFrame(`bullet${level}`);
+        this.node.angle = angle;
+        this.node.position = client.getCannonWorldPos();
+        // 获取节点的角度（假设角度是以度数为单位）
+        const angleInDegrees = this.node.angle + 90;
+        const angleInRadians = angleInDegrees * (Math.PI / 180);
+        let direction = v2(Math.cos(angleInRadians), Math.sin(angleInRadians));
+        // 设置移动速度
+        this.rigidbody.linearVelocity = direction.multiplyScalar(this.speed);
+        let collider = this.getComponent(Collider2D);
+        collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
     }
 
-    onCollisionEnter(other, self) {
-        // 我的子弹发射的，要通知服务器
+    onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
+        // 只在两个碰撞体开始接触时被调用一次
+        let fishId = otherCollider.node.getComponent(Fish).getFishId();
         if (this.client.isMy()) {
-            let fish = other as Fish;
+            // 我的子弹发射的，要通知服务器
             Game.channel.gameNotify("r.updateframe", NotifyUpdateFrame.encode({
                 action: {
                     key: ActionType.Hit_Fish,
-                    valList: [fish.fishInfo.fishId]
+                    valList: [fishId]
                 }
             }).finish());
         }
-        // 回收子弹
-        this.fishGround.collectBullet(this.node);
-        // 生成网
-        this.fishGround.castFishNet(this.level);
+        this.fishGround.castFishNet(this.node.position, this.level);
+        Game.log.logView("onBeginContact", `fish: ${fishId} level: ${this.level}`);
+        this.scheduleOnce(()=>{
+            Game.log.logView("collectBullet");
+            this.fishGround.collectBullet(this.node);
+        }, 0);
+
     }
 
     update(dt) {
-        let displacement = this.direction.multiplyScalar(this.speed * dt);
-        let newPosition = this.node.position.add(displacement);
-        this.node.setPosition(newPosition);
+        let pos = this.node.position;
+        let bx = pos.x, by = pos.y;
+        let width = 1280, height = 720;
+        if (bx > width / 2 + 100
+            || bx < -width / 2 - 100
+            || by > height / 2 + 100
+            || by < -height / 2 - 100
+        ) {
+            this.fishGround.collectBullet(this.node);
+        }
     }
 }

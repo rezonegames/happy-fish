@@ -35,7 +35,7 @@ func GetSession(userId string) (*Session, error) {
 	}
 	if rs.RoomId == "" {
 		return nil, z.NilError{
-			Msg: fmt.Sprintf("%d player no session", userId),
+			Msg: fmt.Sprintf("%s player no session", userId),
 		}
 	}
 	return rs, nil

@@ -39,16 +39,16 @@ export class RandomManager {
      * @param max   最大值
      * @param type  类型
      * @example
-    var min = 1;
-    var max = 10;
-    // [min,max) 得到一个两数之间的随机整数,这个值不小于min（如果min不是整数的话，得到一个向上取整的 min），并且小于（但不等于）max  
-    RandomManager.instance.getRandomInt(min, max, 1);
+     let min = 1;
+     let max = 10;
+     // [min,max) 得到一个两数之间的随机整数,这个值不小于min（如果min不是整数的话，得到一个向上取整的 min），并且小于（但不等于）max
+     RandomManager.instance.getRandomInt(min, max, 1);
 
-    // [min,max] 得到一个两数之间的随机整数，包括两个数在内,这个值比min大（如果min不是整数，那就不小于比min大的整数），但小于（但不等于）max
-    RandomManager.instance.getRandomInt(min, max, 2);
+     // [min,max] 得到一个两数之间的随机整数，包括两个数在内,这个值比min大（如果min不是整数，那就不小于比min大的整数），但小于（但不等于）max
+     RandomManager.instance.getRandomInt(min, max, 2);
 
-    // (min,max) 得到一个两数之间的随机整数
-    RandomManager.instance.getRandomInt(min, max, 3);
+     // (min,max) 得到一个两数之间的随机整数
+     RandomManager.instance.getRandomInt(min, max, 3);
      */
     getRandomInt(min: number, max: number, type: number = 2): number {
         min = Math.ceil(min);
@@ -71,11 +71,11 @@ export class RandomManager {
      * @param n     随机个数
      * @param type  类型
      * @example
-    var a = RandomManager.instance.getRandomByMinMaxList(50, 100, 5)
-    console.log("随机的数字", a);
+     let a = RandomManager.instance.getRandomByMinMaxList(50, 100, 5)
+     console.log("随机的数字", a);
      */
     getRandomByMinMaxList(min: number, max: number, n: number): Array<number> {
-        var result: Array<number> = [];
+        let result: Array<number> = [];
         for (let i = 0; i < n; i++) {
             result.push(this.getRandomInt(min, max))
         }
@@ -87,14 +87,14 @@ export class RandomManager {
      * @param objects 对象数组
      * @param n 随机个数
      * @example
-    var b = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    var r = RandomManager.instance.getRandomByObjectList(b, 5);
-    console.log("原始的对象", b);
-    console.log("随机的对象", r);
+     let b = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+     let r = RandomManager.instance.getRandomByObjectList(b, 5);
+     console.log("原始的对象", b);
+     console.log("随机的对象", r);
      */
     getRandomByObjectList<T>(objects: Array<T>, n: number): Array<T> {
-        var temp: Array<T> = objects.slice();
-        var result: Array<T> = [];
+        let temp: Array<T> = objects.slice();
+        let result: Array<T> = [];
         for (let i = 0; i < n; i++) {
             let index = this.getRandomInt(0, objects.length, n);
             result.push(temp.splice(index, 1)[0]);
@@ -107,23 +107,40 @@ export class RandomManager {
      * @param n     随机数量
      * @param sum   随机元素合
      * @example
-    var c = RandomManager.instance.getRandomBySumList(5, -100);
-    console.log("定和随机分配", c);
+     let c = RandomManager.instance.getRandomBySumList(5, -100);
+     console.log("定和随机分配", c);
      */
     getRandomBySumList(n: number, sum: number): number[] {
-        var residue = sum;
-        var value = 0;
-        var result: Array<number> = [];
+        let residue = sum;
+        let value = 0;
+        let result: Array<number> = [];
         for (let i = 0; i < n; i++) {
             value = this.getRandomInt(0, residue, 3);
             if (i == n - 1) {
                 value = residue;
-            }
-            else {
+            } else {
                 residue -= value;
             }
             result.push(value);
         }
         return result;
+    }
+
+    randomWord(hasChar: boolean, min: number, max: number) {
+        let str = "", range = min;
+        let arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        if (hasChar) {
+            arr = [
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+                'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A',
+                'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+                'U', 'V', 'W', 'X', 'Y', 'Z'
+            ]
+        }
+        for (let i = 0; i < range; i++) {
+            let pos = Math.round(Math.random() * (arr.length - 1));
+            str += arr[pos];
+        }
+        return str;
     }
 }

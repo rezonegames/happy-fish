@@ -28,12 +28,6 @@ let names = {
 /** 
  * 日志管理 
  * @example
-oops.log.trace("默认标准日志");
-oops.log.logConfig("灰色配置日志");
-oops.log.logNet("橙色网络日志");
-oops.log.logModel("紫色数据日志");
-oops.log.logBusiness("蓝色业务日志");
-oops.log.logView("绿色视图日志");
  */
 export class Logger {
     private static tags: number = 0;
@@ -202,10 +196,10 @@ oops.log.table(object);
         let backLog = console.log || log;
         let type = names[tag];
         if (describe) {
-            backLog.call(null, "%c%s%s%s:%s%o", color, this.getDateString(), '[' + type + ']', this.stack(5), describe, msg);
+            backLog.call(null, color, this.getDateString(), '[' + type + ']', this.stack(5), describe, msg);
         }
         else {
-            backLog.call(null, "%c%s%s%s:%o", color, this.getDateString(), '[' + type + ']', this.stack(5), msg);
+            backLog.call(null, color, this.getDateString(), '[' + type + ']', this.stack(5), msg);
         }
     }
 

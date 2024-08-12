@@ -46,6 +46,7 @@ type TableEntity interface {
 	KickUser(s *session.Session, kickUser string) error
 	GetSeatClient(seatId int32) (ClientEntity, bool)
 	BroadCastTableAction(action *proto.OnTableAction) error
+	IsEmpty() bool
 }
 
 type WaiterOption struct {

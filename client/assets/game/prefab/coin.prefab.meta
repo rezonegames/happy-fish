@@ -2,12 +2,12 @@
   "ver": "1.1.50",
   "importer": "prefab",
   "imported": true,
-  "uuid": "172c6373-c2c0-4ad6-9492-639182b970fc",
+  "uuid": "089d27a4-08b3-4e1f-a175-c63f7e2ee9c7",
   "files": [
     ".json"
   ],
   "subMetas": {},
   "userData": {
-    "syncNodeName": "fishground"
+    "syncNodeName": "coin"
   }
 }

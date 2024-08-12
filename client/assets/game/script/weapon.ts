@@ -1,6 +1,6 @@
-import {_decorator, Component, Sprite, SpriteAtlas, Animation, Vec3, find, tween, v3} from "cc";
+import {_decorator, Component, Node, SpriteAtlas, Animation, Vec3, find, UITransform, v3} from "cc";
 import {Game} from "db://assets/game/script/game";
-import {NotifyUpdateFrame} from "db://assets/game/script/proto/client";
+import {NotifyUpdateFrame, WeaponInfo} from "db://assets/game/script/proto/client";
 import {ActionType} from "db://assets/game/script/proto/consts";
 import Client from "db://assets/game/script/client";
 
@@ -12,7 +12,8 @@ export default class Weapon extends Component {
     level: number = 1;
     client: Client = null;
     weaponInfo = null;
-    @property(Animation) anim = null;
+    @property(Animation) anim;
+    @property(Node) cannon: Node
 
     initWeapon(client: Client) {
         this.client = client;
@@ -21,8 +22,23 @@ export default class Weapon extends Component {
 
     setWeapon(level: number) {
         let weaponList = Game.config.weapon;
-        this.weaponInfo = weaponList.filter(w => w.level === level);
-        this.anim.play(this.weaponInfo.name);
+        this.weaponInfo = weaponList.filter(w => w.level === level)[0];
+        // todo：anim
+        // this.anim.play(this.weaponInfo.name);
+    }
+
+    setCannonAngle(angle: number) {
+        this.cannon.angle = angle;
+    }
+
+    getWeapon(): WeaponInfo {
+        return this.weaponInfo;
+    }
+
+    // getCannonWorldPos 获取相对于canvas的局部坐标
+    getCannonWorldPos() {
+        let uiTransform = find("Canvas").getComponent(UITransform);
+        return uiTransform.convertToNodeSpaceAR(this.cannon.worldPosition)
     }
 
     onLevelUp() {

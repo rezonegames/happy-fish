@@ -36,30 +36,25 @@ func HttpRequest(path string, params interface{}) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	req.Header.Set("Content-Type", "application/x-protobuf")
-
 	client = &http.Client{}
 	response, err = client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
-
 	return ioutil.ReadAll(response.Body)
 }
 
 func client(deviceId, rid string) {
-
 	var (
 		ss   = protobuf.NewSerializer()
 		data []byte
 		err  error
 		path string
-		uid  int64
+		uid  string
 		c    *wsio.Connector
 	)
-
 	data, err = HttpRequest("login", &proto2.AccountLoginReq{
 		Partition: proto2.AccountType_DEVICEID,
 		AccountId: deviceId,
@@ -68,7 +63,7 @@ func client(deviceId, rid string) {
 
 	resp := &proto2.AccountLoginResp{}
 	if err = ss.Unmarshal(data, resp); err != nil {
-		log.Println("Error unmarshaling response: %v", err)
+		log.Println("Error unmarshaling response", err)
 		return
 	}
 	switch resp.Code {
@@ -77,44 +72,33 @@ func client(deviceId, rid string) {
 			AccountId: deviceId,
 			Password:  "123",
 		})
-
 		resp1 := &proto2.AccountRegisterResp{}
 		if err = ss.Unmarshal(data, resp1); err != nil {
-			log.Println("Error unmarshaling response: %v", err)
+			log.Println("Error unmarshaling response", err)
 			return
 		}
 		path = resp1.Addr
-
 	case proto2.ErrorCode_OK:
 		path = resp.Addr
 		uid = resp.UserId
-
 	}
-
 	fmt.Println(path, uid)
-
 	// 长链接
 	c = wsio.NewConnector()
 	chReady := make(chan struct{})
 	c.OnConnected(func() {
 		chReady <- struct{}{}
 	})
-
 	if err = c.Start(path, "/nano"); err != nil {
 		panic(err)
 	}
 	<-chReady
-
 	chLogin := make(chan struct{})
 	chEnd := make(chan interface{}, 0)
-
 	state := proto2.GameState_IDLE
-	tableState := proto2.TableState_STATE_NONE
-
-	if uid == 0 {
+	if uid == "" {
 		c.Request("g.register", &proto2.RegisterGameReq{Name: deviceId, AccountId: deviceId}, func(data interface{}) {
 			chLogin <- struct{}{}
-
 			v := proto2.LoginToGameResp{}
 			ss.Unmarshal(data.([]byte), &v)
 			ss.Unmarshal(data.([]byte), &v)
@@ -129,32 +113,16 @@ func client(deviceId, rid string) {
 		})
 	}
 	<-chLogin
-
-	// 状态变化
-	c.On("onState", func(data interface{}) {
-		v := proto2.OnGameState{}
+	c.On("onTableAction", func(data interface{}) {
+		v := proto2.OnTableAction{}
 		ss.Unmarshal(data.([]byte), &v)
-		state = v.State
-		tableInfo := v.TableInfo
-
-		log.Println("onState %v", state)
-
-		if tableInfo == nil {
-			return
-		}
-		tableState = tableInfo.TableState
-
-		log.Println("onState %v tablestate %v tableinfo %s", state, tableState, z.ToString(tableInfo))
-
+		log.Println("onTableAction", v.Action)
 	})
-
 	ra := z.RandInt(1, 2)
 	ticker := time.NewTicker(time.Duration(ra) * time.Second)
 	defer ticker.Stop()
-
 	for {
 		select {
-
 		case <-chEnd:
 			fmt.Println("游戏结束了", uid)
 			c.Close()
@@ -162,39 +130,33 @@ func client(deviceId, rid string) {
 		case <-ticker.C:
 			switch state {
 			case proto2.GameState_IDLE:
-
 				c.Request("r.quickstart", &proto2.QuickStart{RoomId: rid}, func(data interface{}) {
 					v := proto2.QuickStartResp{}
 					ss.Unmarshal(data.([]byte), &v)
 					if v.Code == proto2.ErrorCode_OK {
-						state = proto2.GameState_WAIT
+						state = proto2.GameState_INGAME
 					}
 				})
-
 			case proto2.GameState_INGAME:
-
 			}
 		default:
-
 		}
 	}
 }
 
 var (
-	args = flag.String("args", "1-1 1 1", "room robot.count mode")
+	args = flag.String("args", "1 1", "room robot.count")
 )
 
-// TestGame go test -v --run=TestGame --args="1-1 1 1"
+// TestGame go test -v --run=TestGame --args="1 1"
 func TestGame(t *testing.T) {
 	// wait server startup
 	flag.Parse()
-
 	var (
 		argList       = strings.Split(*args, " ")
 		roomId        = argList[0]
 		robotCount, _ = strconv.Atoi(argList[1])
 	)
-
 	wg := sync.WaitGroup{}
 	for i := 0; i < robotCount; i++ {
 		wg.Add(1)
@@ -205,9 +167,7 @@ func TestGame(t *testing.T) {
 			client(fmt.Sprintf("robot%d", index), roomId)
 		}(i)
 	}
-
 	wg.Wait()
-
 	t.Log("exit")
 }
 

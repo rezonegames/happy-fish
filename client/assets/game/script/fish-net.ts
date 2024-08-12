@@ -1,19 +1,29 @@
-import {_decorator, Component, Animation, find} from "cc";
+import {_decorator, Component, Animation, find, Vec3} from "cc";
 import UIFishGround from "./ui-fishground";
+import {Game} from "db://assets/game/script/game";
 const {ccclass, property} = _decorator;
 
 @ccclass
 export default class FishNet extends Component {
 
-    @property(Animation) anim: Animation = null;
+    @property(Animation) anim: Animation;
+    fishGround: UIFishGround;
 
-    initFishNet(level: number, fishGround: UIFishGround) {
+    initFishNet(pos: Vec3, level: number, fishGround: UIFishGround) {
         this.node.parent = find("canvas");
+        this.fishGround = fishGround;
+        this.node.position = pos;
+
         let animName = "net_" + level;
-        this.anim.getState(animName).on("stop", (event)=>{
-            fishGround.collectFishNet(this.node);
-        });
+        //@ts-ignore
+        this.anim.once("finished", this.onAnimationFinished, this);
         this.anim.play(animName);
+    }
+
+    // onAnimationFinished 定义动画结束后的回调函数
+    onAnimationFinished() {
+        Game.log.logView("onAnimationFinished", "fish-net");
+        this.fishGround.collectFishNet(this.node);
     }
 
     update(dt) {

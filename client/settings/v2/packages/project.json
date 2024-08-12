@@ -7,5 +7,22 @@
       "width": 1280,
       "height": 720
     }
+  },
+  "physics": {
+    "collisionGroups": [
+      {
+        "index": 1,
+        "name": "fish"
+      },
+      {
+        "index": 2,
+        "name": "bullet"
+      }
+    ],
+    "collisionMatrix": {
+      "0": 0,
+      "1": 4,
+      "2": 2
+    }
   }
 }

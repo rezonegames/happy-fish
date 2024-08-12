@@ -44,7 +44,8 @@ class NetTips implements INetworkTips {
 const route2cmd = (route: string): number => {
     let v: any = {
         "onState": 100,
-        "onItemChange": 101,
+        "onFrame": 101,
+        "onTableAction": 102,
     }
     return v[route];
 };
@@ -245,14 +246,14 @@ export class NetChannelManager {
         // 桌子的一些消息
         this.gameAddListener("onTableAction", (cmd, data: any)=>{
             let resp = OnTableAction.decode(data.body);
-            Game.log.logNet(resp, "onTableAction");
+            // Game.log.logNet(resp, "onTableAction");
             EventMgr.raiseEvent("onTableAction", resp);
         }, this);
 
         // 玩家操作
         this.gameAddListener("onFrame", (cmd, data: any)=>{
             let resp = OnFrame.decode(data.body);
-            Game.log.logNet(resp, "onFrame");
+            // Game.log.logNet(resp, "onFrame");
             EventMgr.raiseEvent("onFrame", resp);
         }, this);
     }
@@ -267,6 +268,6 @@ export class NetChannelManager {
 
     // 断开游戏服务器
     public gameClose() {
-        Game.tcp.close(undefined, undefined, NetChannelType.Game);
+        Game.tcp.close(-1, "", NetChannelType.Game);
     }
 }

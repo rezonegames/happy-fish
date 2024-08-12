@@ -28,7 +28,7 @@ func RandomFish() *proto.FishInfo {
 	return FishListConfig[z.RandInt(0, len(FishListConfig)-1)]
 }
 
-// RandomTween 随机返回一个动作
+// RandomTween 随vi机返回一个动作
 func RandomTween() *proto.TweenInfo {
 	return TweenListConfig[z.RandInt(0, len(TweenListConfig)-1)]
 }
