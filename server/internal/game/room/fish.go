@@ -70,7 +70,7 @@ func (f *Fish) Die() {
 	f.grounds.FishDie(f)
 }
 
-// Hit 应该根据客户端的炮的威力来计算击中的概率
+// Hit todo：应该根据客户端的炮的威力来计算击中的概率，目前就按照5：5比例作为击中概率
 func (f *Fish) Hit(client util.ClientEntity) bool {
 	if z.RandInt(0, 10) < 5 {
 		f.Die()

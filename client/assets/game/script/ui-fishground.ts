@@ -18,7 +18,7 @@ import Client from "db://assets/game/script/client";
 import Fish from "db://assets/game/script/fish";
 import FishNet from "db://assets/game/script/fish-net";
 import Bullet from "db://assets/game/script/bullet";
-import Coin from "db://assets/game/script/coin";
+import CoinUp from "db://assets/game/script/coin-up";
 import {ErrorCode} from "db://assets/game/script/proto/error";
 import {uiManager} from "db://assets/core/ui/ui-manager";
 
@@ -32,15 +32,15 @@ export default class UIFishGround extends UIView {
     myClient: Client;
     @property(Graphics) graphics: Graphics
     // 几个池子都放在game，所有人公用，不放在client里，不合理
-    @property(Prefab) fishPrefab: Prefab;
-    @property(Prefab) fishNetPrefab: Prefab;
-    @property(Prefab) bulletPrefab: Prefab;
-    @property(Prefab) coinPrefab: Prefab;
+    @property(Prefab) fishPrefab: Prefab
+    @property(Prefab) fishNetPrefab: Prefab
+    @property(Prefab) bulletPrefab: Prefab
+    @property(Prefab) coinUpPrefab: Prefab
 
     fishPool: NodePool;
     fishNetPool: NodePool;
     bulletPool: NodePool;
-    coinPool: NodePool;
+    coinUpPool: NodePool;
     // 图集
     @property(SpriteAtlas) spAtlas: SpriteAtlas = null;
     // 鱼群
@@ -66,7 +66,7 @@ export default class UIFishGround extends UIView {
         this.fishPool = new NodePool();
         this.fishNetPool = new NodePool();
         this.bulletPool = new NodePool();
-        this.coinPool = new NodePool();
+        this.coinUpPool = new NodePool();
         let tableInfo = args[0] as TableInfo;
         this.tableInfo = tableInfo;
         let {
@@ -230,17 +230,16 @@ export default class UIFishGround extends UIView {
         this.bulletPool.put(bullet);
     }
 
-    // 加金币
     gainCoin(pos: Vec3, count: number) {
-        let node = this.coinPool.get();
+        let node = this.coinUpPool.get();
         if (!node) {
-            node = instantiate(this.coinPrefab);
+            node = instantiate(this.coinUpPrefab);
         }
-        node.getComponent(Coin).initCoin(pos, count, this);
+        node.getComponent(CoinUp).initCoin(pos, count, this);
     }
 
     collectCoin(node: Node) {
-        this.coinPool.put(node);
+        this.coinUpPool.put(node);
     }
 
     // 桌子的自身的操作，比如坐下一个玩家，离开一个玩家，出鱼

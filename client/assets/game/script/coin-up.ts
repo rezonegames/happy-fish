@@ -5,7 +5,7 @@ import {Game} from "db://assets/game/script/game";
 const {ccclass, property} = _decorator;
 
 @ccclass
-export default class Coin extends Component {
+export default class CoinUp extends Component {
 
     @property(Animation) anim: Animation = null;
     @property(Sprite) gain_x: Sprite;
