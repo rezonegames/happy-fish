@@ -14,7 +14,6 @@ type Client struct {
 	resProgress int32
 	joinTime    int64
 	coin        int64 // todo：为带入金币，
-	seatId      int32
 	hitRate     int32
 	weapon      *proto.WeaponInfo
 }
@@ -56,11 +55,11 @@ func (n *Client) GetUserId() string {
 }
 
 func (n *Client) GetSeatId() int32 {
-	return n.seatId
+	return n.user.SeatId
 }
 
 func (n *Client) SetSeatId(seatId int32) {
-	n.seatId = seatId
+	n.user.SeatId = seatId
 }
 
 func (n *Client) AfterInit() {

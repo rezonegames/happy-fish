@@ -2,5 +2,83 @@
   "__version__": "1.3.7",
   "log": {
     "level": 1
+  },
+  "common": {
+    "polyfills": {
+      "asyncFunctions": true
+    },
+    "scenes": [
+      {
+        "url": "db://assets/start/scene-2d.scene",
+        "uuid": "61c63004-ea0b-41fd-985f-0c01155fe7bd"
+      },
+      {
+        "url": "db://assets/免费通用UI素材/scene.scene",
+        "uuid": "b4f17cb5-43a9-4c3f-afe8-b59bec820cce"
+      },
+      {
+        "url": "db://assets/game/scene/main.scene",
+        "uuid": "517a04b2-60a4-4602-8f75-40c35c7ed447",
+        "bundle": "db://assets/game"
+      }
+    ]
+  },
+  "BuildTaskManager": {
+    "taskMap": {
+      "1723647468456": {
+        "type": "build",
+        "id": "1723647468456",
+        "progress": 1,
+        "state": "success",
+        "stage": "run",
+        "message": "2024-8-14 23:00:05 run package /Users/zyh/work/my-code/happy-fish/client/build/web-desktop success!",
+        "options": {
+          "name": "client",
+          "server": "",
+          "platform": "web-desktop",
+          "buildPath": "project://build",
+          "debug": false,
+          "md5Cache": false,
+          "skipCompressTexture": false,
+          "sourceMaps": false,
+          "polyfills": {
+            "asyncFunctions": true
+          },
+          "experimentalEraseModules": false,
+          "startSceneAssetBundle": false,
+          "bundleConfigs": [],
+          "useBuiltinServer": false,
+          "mainBundleIsRemote": false,
+          "mainBundleCompressionType": "merge_dep",
+          "useSplashScreen": true,
+          "bundleCommonChunk": false,
+          "packAutoAtlas": true,
+          "startScene": "61c63004-ea0b-41fd-985f-0c01155fe7bd",
+          "outputName": "web-desktop",
+          "taskName": "web-desktop",
+          "scenes": [
+            {
+              "url": "db://assets/start/scene-2d.scene",
+              "uuid": "61c63004-ea0b-41fd-985f-0c01155fe7bd"
+            },
+            {
+              "url": "db://assets/免费通用UI素材/scene.scene",
+              "uuid": "b4f17cb5-43a9-4c3f-afe8-b59bec820cce"
+            },
+            {
+              "url": "db://assets/game/scene/main.scene",
+              "uuid": "517a04b2-60a4-4602-8f75-40c35c7ed447",
+              "bundle": "db://assets/game"
+            }
+          ],
+          "packages": {},
+          "__version__": "1.3.7",
+          "buildMode": "normal",
+          "logDest": "project://temp/builder/log/web-desktop8-14-2024 22-57.log"
+        },
+        "time": "8-14-2024 22:57:48",
+        "dirty": false
+      }
+    }
   }
 }

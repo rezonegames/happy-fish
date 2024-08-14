@@ -1,4 +1,4 @@
-import {_decorator, Component, Sprite, Graphics, Animation, Vec3, find, tween, UITransform, bezier} from "cc";
+import {_decorator, Component, Sprite, Graphics, Animation, Vec3, find, tween, UITransform, bezier, BoxCollider2D} from "cc";
 import {FishInfo} from "db://assets/game/script/proto/client";
 import UIFishGround from "db://assets/game/script/ui-fishground";
 import {Game} from "db://assets/game/script/game";
@@ -11,7 +11,6 @@ export default class Fish extends Component {
     lastPosition: Vec3; // 计算角度用的
     fishInfo: FishInfo
     fishGround: UIFishGround
-    tempId: string
 
     getFishId() {
         return this.fishInfo.fishId;
@@ -25,9 +24,16 @@ export default class Fish extends Component {
         return this.fishInfo.coin;
     }
 
+    changeCollider() {
+        let collider = this.node.getComponent(BoxCollider2D);
+        collider.size = this.node.getComponent(UITransform).contentSize;
+    }
+
     initFish(fishInfo: FishInfo, fishGround: UIFishGround) {
-        this.node.parent = find("Canvas");
-        this.node.getComponent(UITransform).priority = 20;
+        // this.node.parent = find("Canvas");
+        this.node.parent = fishGround.node;
+        // this.node.getComponent(UITransform).priority = 0;
+        this.node.setSiblingIndex(2);
         // priority
         this.fishInfo = fishInfo;
         this.fishGround = fishGround;
@@ -41,7 +47,7 @@ export default class Fish extends Component {
             bornTime,
             actionList,
         } = this.fishInfo;
-        this.tempId = `${fishId}-${Game.random.randomWord(true, 3, 5)}`;
+        this.changeCollider();
         this.node.getComponent(Sprite).spriteFrame = this.fishGround.getSpriteFrame(name + "_run_0");
         this.anim.play(name + "_run");
         let bornPos = actionList[0];
@@ -107,7 +113,7 @@ export default class Fish extends Component {
 
     // onAnimationFinished 定义动画结束后的回调函数
     onAnimationFinished() {
-        Game.log.logView("onAnimationFinished", "fish-die");
+        // Game.log.logView("onAnimationFinished", "fish-die");
         this.fishGround.collectFish(this.node);
     }
 

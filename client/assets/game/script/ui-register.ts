@@ -30,19 +30,15 @@ export default class UIRegister extends UIView {
                 let resp = RegisterGameResponse.decode(data.body);
                 Game.log.logNet(resp, "注册游戏账号");
                 if (resp.code == ErrorCode.OK) {
-
                     let user = resp.user;
-
                     if (!!user) {
-
                         Game.storage.setUser(user.userId);
                         Game.event.raiseEvent("onUserInfo", user);
                         uiManager.replace(UIID.UIHall);
                         return;
                     }
-
-                    // todo：提示失败
-
+                } else {
+                    uiManager.open(UIID.UIToast, `Register Err: ${resp.code}`);
                 }
             }
         });

@@ -179,7 +179,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 485.5918827508455,
+    "_orthoHeight": 386.0668973471742,
     "_near": 0,
     "_far": 1000,
     "_color": {
@@ -357,7 +357,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "25ad8113-ce2c-4934-a84a-6ef11a787ac2@0557f",
+      "__uuid__": "24a704da-2867-446d-8d1a-5e920c75e09d@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 1,
@@ -515,8 +515,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 63.37138660865276,
-      "height": 50.400000000000006
+      "width": 63.38278096164937,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -548,7 +548,7 @@
     "_string": "label",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 41.578125,
+    "_actualFontSize": 40.640625,
     "_fontSize": 30,
     "_fontFamily": "Arial",
     "_lineHeight": 40,

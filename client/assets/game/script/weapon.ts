@@ -24,7 +24,7 @@ export default class Weapon extends Component {
         let weaponList = Game.config.weapon;
         this.weaponInfo = weaponList.filter(w => w.level === level)[0];
         // todo：anim
-        // this.anim.play(this.weaponInfo.name);
+        this.anim.play(this.weaponInfo.name);
     }
 
     setCannonAngle(angle: number) {

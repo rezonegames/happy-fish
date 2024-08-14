@@ -33,7 +33,7 @@ func NewFishGrounds(table util.TableEntity) *FishGrounds {
 		index:   0,
 		fishes:  make(map[string]*Fish, 0),
 		chEnd:   make(chan bool, 6),
-		maxFish: 30,
+		maxFish: 10,
 		table:   table,
 	}
 	return fishGrounds
@@ -55,7 +55,7 @@ func (f *FishGrounds) AfterInit() {
 				if len(f.fishes) < f.maxFish && !f.table.IsEmpty() {
 					var (
 						err           error
-						randBornCount = z.RandInt(2, 6)
+						randBornCount = z.RandInt(2, 3)
 						fishList      = make([]*proto.FishInfo, 0)
 					)
 					for i := 0; i < randBornCount; i++ {
@@ -96,7 +96,7 @@ func (f *FishGrounds) BornFish() *Fish {
 	)
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	fishId = strconv.Itoa(f.index)
+	fishId = f.table.GetTableId() + "-" + strconv.Itoa(f.index)
 	fish = NewFish(fishId, f, fishInfo)
 	f.fishes[fishId] = fish
 	f.index += 1

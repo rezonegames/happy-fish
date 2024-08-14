@@ -1,4 +1,4 @@
-import {_decorator, Component, Animation, find, Vec3, Sprite} from "cc";
+import {_decorator, Component, Animation, find, Vec3, Sprite, UITransform} from "cc";
 import UIFishGround from "./ui-fishground";
 import {Game} from "db://assets/game/script/game";
 
@@ -14,13 +14,15 @@ export default class CoinUp extends Component {
     fishGround: UIFishGround;
 
     initCoin(pos: Vec3, gain: number, fishGround: UIFishGround) {
-        this.node.parent = find("canvas");
+        this.node.parent = fishGround.node;
+        // this.node.getComponent(UITransform).priority = 1;
+        this.node.setSiblingIndex(3);
         this.fishGround = fishGround;
         this.node.position = pos;
-        this.gain_x.spriteFrame = this.fishGround.getSpriteFrame("goldnum_x");
-        this.gain_1.spriteFrame = this.fishGround.getSpriteFrame(`goldnum_${Math.floor(gain / 10)}`);
-        this.gain_0.spriteFrame = this.fishGround.getSpriteFrame(`goldnum_${gain % 10}`);
-        let animName = "coin_up";
+        this.gain_x.spriteFrame = this.fishGround.getSpriteFrame1("goldnum_x");
+        this.gain_1.spriteFrame = this.fishGround.getSpriteFrame1(`goldnum_${Math.floor(gain / 10)}`);
+        this.gain_0.spriteFrame = this.fishGround.getSpriteFrame1(`goldnum_${gain % 10}`);
+        let animName = "coin-up";
         //@ts-ignore
         this.anim.once("finished", this.onAnimationFinished, this);
         this.anim.play(animName);

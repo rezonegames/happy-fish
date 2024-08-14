@@ -33,7 +33,7 @@ func (r *Room) QuickStart(s *session.Session) (util.TableEntity, error) {
 		}
 	}
 	if suitTable == nil {
-		suitTable, err = r.CreateTable(s, fmt.Sprintf("%s:%d", r.roomId, r.index), "")
+		suitTable, err = r.CreateTable(s, fmt.Sprintf("%s_%d", r.roomId, r.index), "")
 		if err != nil {
 			return nil, err
 		}

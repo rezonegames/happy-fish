@@ -1,4 +1,4 @@
-import {_decorator, Component, Animation, find, Vec3} from "cc";
+import {_decorator, Component, Animation, find, Vec3, UITransform, director} from "cc";
 import UIFishGround from "./ui-fishground";
 import {Game} from "db://assets/game/script/game";
 const {ccclass, property} = _decorator;
@@ -10,7 +10,9 @@ export default class FishNet extends Component {
     fishGround: UIFishGround;
 
     initFishNet(pos: Vec3, level: number, fishGround: UIFishGround) {
-        this.node.parent = find("canvas");
+        this.node.parent = fishGround.node;
+        // this.node.getComponent(UITransform).priority = 1;
+        this.node.setSiblingIndex(3)
         this.fishGround = fishGround;
         this.node.position = pos;
 
@@ -22,7 +24,7 @@ export default class FishNet extends Component {
 
     // onAnimationFinished 定义动画结束后的回调函数
     onAnimationFinished() {
-        Game.log.logView("onAnimationFinished", "fish-net");
+        // Game.log.logView("onAnimationFinished", "fish-net");
         this.fishGround.collectFishNet(this.node);
     }
 

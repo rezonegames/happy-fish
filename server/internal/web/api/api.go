@@ -18,7 +18,8 @@ func GetGateAddr() (string, error) {
 
 	// 内网还是外网ip
 	if sc.IsDebug {
-		return z.GetPrivateIp()
+		//return z.GetPrivateIp()
+		return "127.0.0.1", nil
 
 	}
 

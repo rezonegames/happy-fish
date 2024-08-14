@@ -268,6 +268,6 @@ export class NetChannelManager {
 
     // 断开游戏服务器
     public gameClose() {
-        Game.tcp.close(-1, "", NetChannelType.Game);
+        Game.tcp.close(undefined, undefined, NetChannelType.Game);
     }
 }

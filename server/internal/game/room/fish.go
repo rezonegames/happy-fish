@@ -2,6 +2,7 @@ package room
 
 import (
 	"happy-fish/internal/game/util"
+	"happy-fish/pkg/log"
 	"happy-fish/pkg/z"
 	"happy-fish/proto/proto"
 	"sync"
@@ -30,7 +31,7 @@ func NewFish(fishId string, grounds *FishGrounds, fishInfo *proto.FishInfo) *Fis
 	)
 	fish = &Fish{
 		fishInfo: &proto.FishInfo{
-			FishId:       fishInfo.FishId,
+			FishId:       fishId,
 			Name:         fishInfo.Name,
 			Coin:         fishInfo.Coin,
 			Hp:           fishInfo.Coin,
@@ -72,8 +73,9 @@ func (f *Fish) Die() {
 
 // Hit todo：应该根据客户端的炮的威力来计算击中的概率，目前就按照5：5比例作为击中概率
 func (f *Fish) Hit(client util.ClientEntity) bool {
-	if z.RandInt(0, 10) < 5 {
+	if z.RandInt(0, 10) < 8 {
 		f.Die()
+		log.Info("fish: %s was killed by user: %s", f.fishId, client.GetUserId())
 		return true
 	}
 	return false

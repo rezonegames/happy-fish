@@ -26,26 +26,21 @@ export default class Client extends Component {
     fishGround: UIFishGround;
     seatId: number
 
-    onLoad() {
-        this.node.getComponent(UITransform).priority = 30;
+    init(fishGround: UIFishGround, seatId: number) {
+        // this.seatId = parseInt(this.name.split('-')[1]);
+        this.seatId = seatId;
+        this.fishGround = fishGround
+        // this.node.getComponent(UITransform).priority = 1;
+        this.node.setSiblingIndex(5);
         this.clearUser();
     }
 
-    initUser(userInfo: UserInfo, fishGround: UIFishGround) {
-        this.fishGround = fishGround;
+    initUser(userInfo: UserInfo) {
         this.userInfo = userInfo;
         this.weapon = this.node.getChildByName("weapon").getComponent(Weapon);
         this.weapon.initWeapon(this);
         this.sitDown.node.active = false;
         this.nname.string = this.userInfo.name;
-    }
-
-    setSeatId(seatId: number) {
-        this.seatId = seatId;
-    }
-
-    getSeatId() {
-        return this.seatId;
     }
 
     clearUser() {
@@ -67,19 +62,22 @@ export default class Client extends Component {
     }
 
     onClickSit() {
+        let tableId = this.fishGround.getTableId();
+        Game.log.logNet(`onClickSit tableId: ${tableId} seatId: ${this.seatId}`);
         Game.channel.gameRequest("r.sitdown", SitDown.encode({
-            tableId: this.fishGround.tableInfo.tableId,
+            tableId,
             password: "",
             seatId: this.seatId,
         }).finish(), {
             target: this,
-            callback:(cmd: number, data: any) => {
+            callback: (cmd: number, data: any) => {
                 let resp = SitDownResp.decode(data.body);
                 Game.log.logNet(JSON.stringify(resp), "onClickSit");
                 if (resp.code == ErrorCode.OK) {
                     // ok
+                    uiManager.open(UIID.UIToast, `Sit Down Success`);
                 } else {
-                    uiManager.open(UIID.UIToast, `sit down err: ${resp.code}`);
+                    uiManager.open(UIID.UIToast, `Sit Down Err: ${resp.code}`);
                 }
             }
         });
@@ -113,16 +111,21 @@ export default class Client extends Component {
             valList.forEach((fishId) => {
                 let fish = this.fishGround.getFish(fishId);
                 if (fish) {
-                    let pos = fish.getWorldPosition();
+                    let uiTransform = find("Canvas").getComponent(UITransform);
+                    let pos = uiTransform.convertToNodeSpaceAR(fish.getWorldPosition());
                     let addCoins = fish.getCoin();
-                    this.fishGround.gainCoin(pos, addCoins);
+                    Game.log.logNet(`fish die pos: ${pos.x}:${pos.y} coins: ${addCoins}`, fishId);
                     fish.die();
+                    this.fishGround.gainCoin(pos, addCoins);
                 }
             })
         }
         // 武器升级
         const doWeaponLevelUp = (valList: string[]) => {
             let value = valList[0];
+            if (this.isMy()) {
+                uiManager.open(UIID.UIToast, `Level Up To ${value} Success`);
+            }
             this.weapon.setWeapon(parseInt(value));
         }
         const valList = action.valList;

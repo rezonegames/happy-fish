@@ -16,10 +16,14 @@ export default class Bullet extends Component {
     client: Client;
     fishGround: UIFishGround;
     @property(RigidBody2D) rigidbody: RigidBody2D;
+    begin: number = 0;
 
     initBullet(angle: number, level: number, client: Client, fishGround: UIFishGround) {
-        this.node.parent = find("Canvas");
-        this.node.getComponent(UITransform).priority = 20;
+        // this.node.parent = find("Canvas");
+        this.node.parent = fishGround.node;
+        // this.node.getComponent(UITransform).priority = 0;
+        this.node.setSiblingIndex(2);
+        this.begin = 0;
         this.level = level;
         this.fishGround = fishGround;
         this.client = client;
@@ -48,16 +52,21 @@ export default class Bullet extends Component {
                 }
             }).finish());
         }
-        this.fishGround.castFishNet(this.node.position, this.level);
-        Game.log.logView("onBeginContact", `fish: ${fishId} level: ${this.level}`);
         this.scheduleOnce(()=>{
-            Game.log.logView("collectBullet");
+            // 在下一祯再发
+            let uiTransform = find("Canvas").getComponent(UITransform);
+            this.fishGround.castFishNet(uiTransform.convertToNodeSpaceAR(this.node.worldPosition), this.level);
             this.fishGround.collectBullet(this.node);
         }, 0);
-
     }
 
     update(dt) {
+        this.begin += dt;
+        if (this.begin >= 5) {
+            // 超过5s，直接强制销毁
+            this.fishGround.collectBullet(this.node);
+            return
+        }
         let pos = this.node.position;
         let bx = pos.x, by = pos.y;
         let width = 1280, height = 720;

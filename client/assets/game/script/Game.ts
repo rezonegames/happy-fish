@@ -18,6 +18,7 @@ let colorMap = {
     4: new Color(200, 100, 200),  // 紫色
     5: new Color(100, 200, 200)   // 青色
 }
+
 export function GetTeamColor(teamId): Color {
     return colorMap[teamId];
 }
@@ -30,6 +31,7 @@ export enum UIID {
     UIFishGround,
     UIToast,
 }
+
 const bundle = "game";
 export let UICF: { [key: number]: UIConf } = {
     [UIID.UILogin]: {bundle, prefab: "prefab/login"},
@@ -53,7 +55,7 @@ export class Game {
 
     static InitGame() {
         Game.log.logView("game init", "");
-        Game.config.weapon = Game.res.get("/config/weapon",  JsonAsset, bundle).json;
+        Game.config.weapon = Game.res.get("/config/weapon", JsonAsset, bundle).json;
         Game.storage = new StorageManager(); // storage
         // http连接地址
         Game.http = new HttpRequest();

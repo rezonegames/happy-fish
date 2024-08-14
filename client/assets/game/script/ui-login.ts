@@ -1,10 +1,11 @@
-import {_decorator, Label, Node, tween, Vec3, Sprite, EditBox} from "cc";
+import {_decorator, Label, Node, instantiate, v3} from "cc";
 import {AccountLoginReq, AccountLoginResp} from "db://assets/game/script/proto/web";
 import {ErrorCode} from "db://assets/game/script/proto/error";
 import {UIView} from "db://assets/core/ui/ui-view";
 
 import {Game, UIID} from "db://assets/game/script/game";
 import {uiManager} from "db://assets/core/ui/ui-manager";
+import FishNet from "db://assets/game/script/fish-net";
 
 const {ccclass, property} = _decorator;
 
@@ -17,7 +18,7 @@ export default class UILogin extends UIView {
 
     onOpen(fromUI: number, ...args) {
         super.onOpen(fromUI, ...args);
-        Game.log.logView("UILogin", "UILogin");
+        // Game.log.logView("UILogin", "UILogin");
         this.clearConnect();
     }
 
@@ -30,7 +31,7 @@ export default class UILogin extends UIView {
         this.adder.string = resp.addr;
         let info;
         if (resp.userId == "") {
-            info = "No Account, Connect to server and Register, Happy Happy";
+            info = "No Account, Connect to server and Register, Happy Go";
         } else {
             // 账号基本信息保存在本地
             Game.storage.setUser(resp.userId);
@@ -72,7 +73,6 @@ export default class UILogin extends UIView {
 
     onConnect() {
         Game.channel.gameClose();
-
         Game.channel.gameConnect(this.adder.string);
     }
 }

@@ -27,9 +27,7 @@ const {ccclass, property} = _decorator;
 @ccclass
 export default class UIFishGround extends UIView {
 
-    @property([Node]) clientNodeList: Node[] = [];
     clientMap: { [key: string]: Client } = {};
-    myClient: Client;
     @property(Graphics) graphics: Graphics
     // 几个池子都放在game，所有人公用，不放在client里，不合理
     @property(Prefab) fishPrefab: Prefab
@@ -42,7 +40,8 @@ export default class UIFishGround extends UIView {
     bulletPool: NodePool;
     coinUpPool: NodePool;
     // 图集
-    @property(SpriteAtlas) spAtlas: SpriteAtlas = null;
+    @property(SpriteAtlas) spAtlas: SpriteAtlas
+    @property(SpriteAtlas) coinAtlas: SpriteAtlas
     // 鱼群
     fishMap: { [key: string]: Fish } = {};
     tableInfo: TableInfo;
@@ -51,18 +50,31 @@ export default class UIFishGround extends UIView {
         return this.spAtlas.getSpriteFrame(name);
     }
 
+    getSpriteFrame1(name: string): SpriteFrame {
+        return this.coinAtlas.getSpriteFrame(name);
+    }
+
     drawTest(startPos, p2, p3, endPos) {
         this.graphics.moveTo(startPos.x, startPos.y);
         this.graphics.bezierCurveTo(p2.x, p2.y, p3.x, p3.y, endPos.x, endPos.y);
         this.graphics.stroke();
     }
 
+    getTableId() {
+        return this.tableInfo.tableId;
+    }
+
     public onOpen(fromUI: number, ...args: any): void {
         super.onOpen(fromUI, ...args);
         Game.log.logView("UIFishGround open");
-        this.node.getChildByName("background").getComponent(UITransform).priority = -1;
+        this.node.getChildByName("background").setSiblingIndex(0);
         EventMgr.addEventListener("onTableAction", this.onTableAction, this);
         EventMgr.addEventListener("onFrame", this.onFrame, this);
+        // 初始化client
+        for (let i = 1; i <= 6; i++) {
+            let client = this.getSeatClient(i);
+            client.init(this, i);
+        }
         this.fishPool = new NodePool();
         this.fishNetPool = new NodePool();
         this.bulletPool = new NodePool();
@@ -78,12 +90,16 @@ export default class UIFishGround extends UIView {
         }
         let uiTransform = find("Canvas").getComponent(UITransform);
         this.node.on(Node.EventType.TOUCH_START, (event) => {
+            let myClient = this.clientMap[Game.storage.getUser()];
+            if (!myClient) {
+                return;
+            }
             // 触点是世界坐标，需要转换为和炮台一致的坐标系下
             let touch = event.touch;
             let x = touch.getUILocationX();
             let y = touch.getUILocationY();
             let touchPos = uiTransform.convertToNodeSpaceAR(new Vec3(x, y, 0));
-            let myWeapon = this.myClient.getWeapon();
+            let myWeapon = myClient.getWeapon();
             let weaponId = myWeapon.weaponId;
             // 点击的命令发出
             Game.channel.gameNotify("r.updateframe", NotifyUpdateFrame.encode({
@@ -122,6 +138,10 @@ export default class UIFishGround extends UIView {
                 let resp = LeaveRoomResp.decode(data.body);
                 Game.log.logNet(JSON.stringify(resp), "onClickLeaveRoom");
                 if (resp.code == ErrorCode.OK) {
+                    // 回收鱼
+                    for(const [k, v] of Object.entries(this.fishMap)) {
+                        this.collectFish(v.node)
+                    }
                     uiManager.replace(UIID.UIHall);
                 } else {
                     uiManager.open(UIID.UIToast, `Leave Room Err: ${resp.code}`);
@@ -130,23 +150,27 @@ export default class UIFishGround extends UIView {
         });
     }
 
+    findNodeByName(root: Node, name: string): Node | null {
+        if (root.name === name) {
+            return root;
+        }
+        for (let i = 0; i < root.children.length; i++) {
+            const child = root.children[i];
+            const found = this.findNodeByName(child, name);
+            if (found) {
+                return found;
+            }
+        }
+        return null;
+    }
+
     // getSeatUIPlayer 通过座位号获取UIPlayer对象
     getSeatClient(seatId: Number) {
-        let client: Client;
-        for (let i = 0; i < this.clientNodeList.length; i++) {
-            client = this.clientNodeList[i].getComponent(Client);
-            // 初始化
-            if (client.seatId == 0) {
-                client.setSeatId(i+1);
-            }
-            if (client.getSeatId() === seatId) {
-                break;
-            }
+        let node = this.findNodeByName(this.node, `client-${seatId}`);
+        if (!node) {
+            throw new Error(`seatId: ${seatId} not found`);
         }
-        if (!client) {
-            throw new Error(`getSeatClient not found seatId: ${seatId}`)
-        }
-        return client;
+        return node.getComponent(Client);
     }
 
     getClient(userId: string) {
@@ -160,11 +184,8 @@ export default class UIFishGround extends UIView {
             seatId,
         } = user;
         let client = this.getSeatClient(seatId);
-        client.initUser(user, this);
+        client.initUser(user);
         this.clientMap[userId] = client;
-        if (client.isMy()) {
-            this.myClient = client;
-        }
     }
 
     // delUser 离开
@@ -176,9 +197,6 @@ export default class UIFishGround extends UIView {
         let client = this.getSeatClient(seatId);
         client.clearUser();
         delete this.clientMap[userId];
-        if (client.isMy()) {
-            this.myClient = null;
-        }
     }
 
     // bornFishes 生鱼

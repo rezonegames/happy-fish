@@ -190,7 +190,7 @@ func (t *Table) StandUp(s *session.Session) error {
 	)
 	delete(t.clients, uid)
 	if ok {
-		t.BroadCastTableAction(&proto.OnTableAction{
+		_ = t.BroadCastTableAction(&proto.OnTableAction{
 			Action: proto.TableAction_LEAVE_USER,
 			User:   standUpUser.GetUserInfo(),
 		})
@@ -235,17 +235,20 @@ func (t *Table) SitDown(s *session.Session, seatId int32, password string) error
 			}
 		}
 	}
+	if seatId <= 0 {
+		return errors.New("seatId <=0 err!!")
+	}
 	myClient = NewClient(&util.ClientOption{
 		S:      s,
 		SeatId: seatId,
 		Table:  t,
 	})
 	t.clients[uid] = myClient
-	t.BroadCastTableAction(&proto.OnTableAction{
+	_ = t.BroadCastTableAction(&proto.OnTableAction{
 		Action: proto.TableAction_ADD_USER,
 		User:   myClient.GetUserInfo(),
 	})
-	log.Info(t.Format("SitDown success user: %s :)", uid))
+	log.Info(t.Format("SitDown success user: %s seatId: %d :<", uid, seatId))
 	return err
 }
 

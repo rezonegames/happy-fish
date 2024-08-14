@@ -78,7 +78,7 @@
       "__id__": 1
     },
     "_children": [],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 3
@@ -467,7 +467,7 @@
     "_string": "wx",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 25.11111111111111,
+    "_actualFontSize": 27.09375,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -853,7 +853,7 @@
     "_string": "guest",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 25.11111111111111,
+    "_actualFontSize": 27.09375,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1239,7 +1239,7 @@
     "_string": "facebook",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 25.11111111111111,
+    "_actualFontSize": 27.09375,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1654,7 +1654,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1006.3417255772954,
+      "width": 1006.2472967128027,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1693,7 +1693,7 @@
     "_string": "labelssdfsdfsdfsffdsdfsdfsdfsfsfsdfsfsdfsdfsfsdfsdfsdfsdfs",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 50.22222222222222,
+    "_actualFontSize": 54.1875,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1813,7 +1813,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1006.3417255772954,
+      "width": 1006.2472967128027,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1852,7 +1852,7 @@
     "_string": "labelssdfsdfsdfsffdsdfsdfsdfsfsfsdfsfsdfsdfsfsdfsdfsdfsdfs",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 50.22222222222222,
+    "_actualFontSize": 54.1875,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2068,7 +2068,7 @@
     "_string": "connect",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 25.11111111111111,
+    "_actualFontSize": 27.09375,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
