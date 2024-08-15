@@ -44,10 +44,13 @@
       },
       {
         "__id__": 130
+      },
+      {
+        "__id__": 132
       }
     ],
     "_prefab": {
-      "__id__": 132
+      "__id__": 134
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -2466,11 +2469,39 @@
       "__uuid__": "35c20997-9bee-40c6-9b60-e51617f85939",
       "__expectedType__": "cc.SpriteAtlas"
     },
+    "music": {
+      "__id__": 132
+    },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "45KkILt75MB79vsjSISPWe"
+  },
+  {
+    "__type__": "cc.AudioSource",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 133
+    },
+    "_clip": {
+      "__uuid__": "8721dd57-7d3e-4f68-8555-028cdf934977",
+      "__expectedType__": "cc.AudioClip"
+    },
+    "_loop": true,
+    "_playOnAwake": true,
+    "_volume": 1,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "4bHdSCU7hPy4csPr/TDyBo"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -2484,16 +2515,16 @@
     "instance": null,
     "targetOverrides": [
       {
-        "__id__": 133
+        "__id__": 135
       },
       {
-        "__id__": 136
+        "__id__": 138
       },
       {
-        "__id__": 139
+        "__id__": 141
       },
       {
-        "__id__": 142
+        "__id__": 144
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -2523,7 +2554,7 @@
       "__id__": 22
     },
     "sourceInfo": {
-      "__id__": 134
+      "__id__": 136
     },
     "propertyPath": [
       "energy"
@@ -2532,7 +2563,7 @@
       "__id__": 22
     },
     "targetInfo": {
-      "__id__": 135
+      "__id__": 137
     }
   },
   {
@@ -2553,7 +2584,7 @@
       "__id__": 22
     },
     "sourceInfo": {
-      "__id__": 137
+      "__id__": 139
     },
     "propertyPath": [
       "sitDown"
@@ -2562,7 +2593,7 @@
       "__id__": 22
     },
     "targetInfo": {
-      "__id__": 138
+      "__id__": 140
     }
   },
   {
@@ -2583,7 +2614,7 @@
       "__id__": 22
     },
     "sourceInfo": {
-      "__id__": 140
+      "__id__": 142
     },
     "propertyPath": [
       "nname"
@@ -2592,7 +2623,7 @@
       "__id__": 22
     },
     "targetInfo": {
-      "__id__": 141
+      "__id__": 143
     }
   },
   {
@@ -2613,7 +2644,7 @@
       "__id__": 35
     },
     "sourceInfo": {
-      "__id__": 143
+      "__id__": 145
     },
     "propertyPath": [
       "_target"
@@ -2622,7 +2653,7 @@
       "__id__": 35
     },
     "targetInfo": {
-      "__id__": 144
+      "__id__": 146
     }
   },
   {

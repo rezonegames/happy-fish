@@ -1,6 +1,6 @@
 import {
     _decorator, Graphics, Prefab, NodePool, Vec3, Node, instantiate, SpriteAtlas,
-    SpriteFrame, UITransform, find
+    SpriteFrame, UITransform, find, AudioSource
 } from "cc";
 import {UIView} from "db://assets/core/ui/ui-view";
 import {EventMgr} from "db://assets/core/common/event-manager";
@@ -40,11 +40,12 @@ export default class UIFishGround extends UIView {
     bulletPool: NodePool;
     coinUpPool: NodePool;
     // 图集
-    @property(SpriteAtlas) spAtlas: SpriteAtlas
-    @property(SpriteAtlas) coinAtlas: SpriteAtlas
+    @property(SpriteAtlas) spAtlas: SpriteAtlas;
+    @property(SpriteAtlas) coinAtlas: SpriteAtlas;
     // 鱼群
     fishMap: { [key: string]: Fish } = {};
     tableInfo: TableInfo;
+    @property(AudioSource) music: AudioSource;
 
     getSpriteFrame(name: string): SpriteFrame {
         return this.spAtlas.getSpriteFrame(name);
@@ -67,6 +68,7 @@ export default class UIFishGround extends UIView {
     public onOpen(fromUI: number, ...args: any): void {
         super.onOpen(fromUI, ...args);
         Game.log.logView("UIFishGround open");
+        this.music.play();
         this.node.getChildByName("background").setSiblingIndex(0);
         EventMgr.addEventListener("onTableAction", this.onTableAction, this);
         EventMgr.addEventListener("onFrame", this.onFrame, this);
@@ -142,6 +144,7 @@ export default class UIFishGround extends UIView {
                     for(const [k, v] of Object.entries(this.fishMap)) {
                         this.collectFish(v.node)
                     }
+                    this.music.stop();
                     uiManager.replace(UIID.UIHall);
                 } else {
                     uiManager.open(UIID.UIToast, `Leave Room Err: ${resp.code}`);
